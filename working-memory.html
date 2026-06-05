@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>작업 기억력(Working Memory) 강화 훈련</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Malgun Gothic', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            width: min(360px, 100%);
+        }
+        .home-link {
+            display: inline-block;
+            margin-bottom: 16px;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .home-link:hover { color: #007bff; }
+        h2 { color: #333; margin-bottom: 20px; font-size: 1.5rem; }
+        .register-indicator {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+            background: #e7f3ff;
+            padding: 8px;
+            border-radius: 8px;
+        }
+        .question {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #222;
+        }
+        input[type="number"] {
+            width: 80%;
+            padding: 12px;
+            font-size: 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        input[type="number"]:focus { border-color: #007bff; }
+        button {
+            width: 85%;
+            padding: 12px;
+            font-size: 1.1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background-color: #0056b3; }
+        .feedback {
+            margin-top: 15px;
+            font-size: 1rem;
+            line-height: 1.5;
+            min-height: 50px;
+        }
+        .success { color: #28a745; font-weight: bold; }
+        .error { color: #dc3545; font-weight: bold; }
+        .history { font-size: 0.9rem; color: #666; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <a href="index.html" class="home-link">← 훈련실로 돌아가기</a>
+    <h2>작업 기억력 강화 훈련</h2>
+    <div id="register-name" class="register-indicator">메모리 A 차례</div>
+    <div id="question-text" class="question">준비중...</div>
+    
+    <input type="number" id="user-answer" placeholder="정답 입력" autocomplete="off">
+    <button onclick="checkAnswer()" id="action-btn">시작하기</button>
+    
+    <div id="feedback-text" class="feedback"></div>
+</div>
+
+<script>
+    let registers = {
+        'A': Math.floor(Math.random() * 9) + 1,
+        'B': Math.floor(Math.random() * 9) + 1,
+        'C': Math.floor(Math.random() * 9) + 1
+    };
+    
+    let order = ['A', 'B', 'C'];
+    let currentIndex = 0;
+    let isInitialized = false;
+    
+    let currentOp = '';
+    let currentNum = 0;
+    let correctAnswer = 0;
+    let previousValue = 0;
+
+    const regNameEl = document.getElementById('register-name');
+    const questionEl = document.getElementById('question-text');
+    const answerInput = document.getElementById('user-answer');
+    const btnEl = document.getElementById('action-btn');
+    const feedbackEl = document.getElementById('feedback-text');
+
+    answerInput.addEventListener('keyup', function(event) {
+        if (event.key === 'Enter') checkAnswer();
+    });
+
+    function initGame() {
+        regNameEl.innerText = '초기 세팅 기억하기';
+        questionEl.innerHTML = `A: <span style='color:#007bff'>${registers['A']}</span><br>B: <span style='color:#007bff'>${registers['B']}</span><br>C: <span style='color:#007bff'>${registers['C']}</span>`;
+        btnEl.innerText = '기억했습니다 (시작)';
+        answerInput.style.display = 'none';
+        isInitialized = true;
+    }
+
+    function nextQuestion() {
+        answerInput.style.display = 'inline-block';
+        answerInput.value = '';
+        answerInput.focus();
+        btnEl.innerText = '제출';
+
+        let currentReg = order[currentIndex];
+        regNameEl.innerText = `메모리 ${currentReg} 차례`;
+
+        let ops = ['+', '-'];
+        currentOp = ops[Math.floor(Math.random() * ops.length)];
+        currentNum = Math.floor(Math.random() * 8) + 2;
+
+        previousValue = registers[currentReg];
+
+        if (currentOp === '+') {
+            correctAnswer = previousValue + currentNum;
+        } else {
+            if (previousValue - currentNum < 0) {
+                currentOp = '+';
+                correctAnswer = previousValue + currentNum;
+            } else {
+                correctAnswer = previousValue - currentNum;
+            }
+        }
+
+        questionEl.innerText = `이전 결과 ${currentOp} ${currentNum} = ?`;
+    }
+
+    function checkAnswer() {
+        if (!isInitialized) {
+            initGame();
+            return;
+        }
+        if (btnEl.innerText === '기억했습니다 (시작)' || btnEl.innerText === '틀렸습니다 (다음 진행)') {
+            nextQuestion();
+            return;
+        }
+
+        let userAnswer = parseInt(answerInput.value, 10);
+        if (isNaN(userAnswer)) return;
+
+        let currentReg = order[currentIndex];
+
+        if (userAnswer === correctAnswer) {
+            feedbackEl.innerHTML = '<span class="success">정답입니다! 😊</span>';
+            registers[currentReg] = correctAnswer;
+            currentIndex = (currentIndex + 1) % 3;
+            nextQuestion();
+        } else {
+            feedbackEl.innerHTML = `
+                <span class="error">오답입니다! 😢</span><br>
+                <span class="history">메모리 ${currentReg}의 이전 값은 <b>${previousValue}</b> 였습니다.</span><br>
+                <span class="history">정답은 ${previousValue} ${currentOp} ${currentNum} = ${correctAnswer}</span>
+            `;
+            registers[currentReg] = correctAnswer;
+            currentIndex = (currentIndex + 1) % 3;
+            btnEl.innerText = '틀렸습니다 (다음 진행)';
+            answerInput.style.display = 'none';
+        }
+    }
+
+    questionEl.innerText = '클릭하여 시작하세요';
+    answerInput.style.display = 'none';
+</script>
+
+</body>
+</html>
