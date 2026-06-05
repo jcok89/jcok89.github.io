@@ -78,6 +78,7 @@
             justify-content: center;
         }
         .progress { color: #64748b; font-weight: 700; min-height: 24px; }
+        .timer { color: #b45309; font-weight: 800; min-height: 24px; margin-top: -10px; margin-bottom: 14px; }
         .answer-grid {
             display: grid;
             gap: 10px;
@@ -118,6 +119,7 @@
         <section id="memorize-section" class="hidden">
             <div class="progress" id="progress-text"></div>
             <div class="word-display" id="word-display"></div>
+            <div class="timer" id="timer-text"></div>
             <button id="next-btn">다음 글자 보기</button>
         </section>
 
@@ -135,9 +137,12 @@
     const MID = ['건','난','달','람','민','빈','산','연','준','찬','린','솔','율','현','겸','담','원','석','윤','혁','진','태','림','별','온','결','재','훈','도','하'];
     const END = ['아','나','라','미','서','유','은','오','재','하','린','온','솔','별','담','겸','준','현','율','도','원','진','찬','민','수','리','빈','연','우','태'];
     const SYLLABLE_POOL = [...CHO, ...MID, ...END];
+    const AUTO_ADVANCE_SECONDS = 10;
 
     let selectedWords = [];
     let currentIndex = 0;
+    let autoAdvanceTimer = null;
+    let secondsLeft = AUTO_ADVANCE_SECONDS;
 
     const setupSection = document.getElementById('setup-section');
     const memorizeSection = document.getElementById('memorize-section');
@@ -146,6 +151,7 @@
     const wordCountInput = document.getElementById('word-count');
     const progressText = document.getElementById('progress-text');
     const wordDisplay = document.getElementById('word-display');
+    const timerText = document.getElementById('timer-text');
     const answerGrid = document.getElementById('answer-grid');
 
     document.getElementById('start-btn').addEventListener('click', startTraining);
@@ -178,6 +184,30 @@
         return [...result];
     }
 
+    function clearAutoAdvanceTimer() {
+        if (autoAdvanceTimer) {
+            clearInterval(autoAdvanceTimer);
+            autoAdvanceTimer = null;
+        }
+    }
+
+    function updateTimerText() {
+        timerText.innerText = `자동 다음까지 ${secondsLeft}초`;
+    }
+
+    function startAutoAdvanceTimer() {
+        clearAutoAdvanceTimer();
+        secondsLeft = AUTO_ADVANCE_SECONDS;
+        updateTimerText();
+        autoAdvanceTimer = setInterval(function() {
+            secondsLeft -= 1;
+            updateTimerText();
+            if (secondsLeft <= 0) {
+                showNextWord();
+            }
+        }, 1000);
+    }
+
     function startTraining() {
         const count = Math.max(1, Math.min(20, parseInt(wordCountInput.value, 10) || 5));
         selectedWords = generateUniqueStrings(count);
@@ -193,9 +223,11 @@
         progressText.innerText = `${currentIndex + 1} / ${selectedWords.length}`;
         wordDisplay.innerText = selectedWords[currentIndex];
         document.getElementById('next-btn').innerText = currentIndex === selectedWords.length - 1 ? '입력하러 가기' : '다음 글자 보기';
+        startAutoAdvanceTimer();
     }
 
     function showNextWord() {
+        clearAutoAdvanceTimer();
         currentIndex += 1;
         if (currentIndex >= selectedWords.length) {
             showAnswerInputs();
@@ -205,6 +237,7 @@
     }
 
     function showAnswerInputs() {
+        clearAutoAdvanceTimer();
         memorizeSection.classList.add('hidden');
         answerSection.classList.remove('hidden');
         answerGrid.innerHTML = '';
@@ -223,6 +256,7 @@
     }
 
     function checkAnswers() {
+        clearAutoAdvanceTimer();
         const correctSet = new Set(selectedWords.map(normalize));
         const userAnswers = Array.from(answerGrid.querySelectorAll('input')).map(input => normalize(input.value)).filter(Boolean);
         const uniqueUserAnswers = [...new Set(userAnswers)];
@@ -243,6 +277,7 @@
     }
 
     function restart() {
+        clearAutoAdvanceTimer();
         selectedWords = [];
         currentIndex = 0;
         resultSection.classList.add('hidden');

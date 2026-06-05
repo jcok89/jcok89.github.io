@@ -78,6 +78,7 @@
             justify-content: center;
         }
         .progress { color: #64748b; font-weight: 700; min-height: 24px; }
+        .timer { color: #047857; font-weight: 800; min-height: 24px; margin-top: -10px; margin-bottom: 14px; }
         .answer-grid {
             display: grid;
             gap: 10px;
@@ -118,6 +119,7 @@
         <section id="memorize-section" class="hidden">
             <div class="progress" id="progress-text"></div>
             <div class="word-display" id="word-display"></div>
+            <div class="timer" id="timer-text"></div>
             <button id="next-btn">다음 단어 보기</button>
         </section>
 
@@ -140,8 +142,11 @@
         '종이','상자','열쇠','거울','물병','수건','라디오','신문','달력','컴퓨터','화면','버튼','숫자','계산','문제','정답','오답','훈련','습관','성장'
     ];
 
+    const AUTO_ADVANCE_SECONDS = 10;
     let selectedWords = [];
     let currentIndex = 0;
+    let autoAdvanceTimer = null;
+    let secondsLeft = AUTO_ADVANCE_SECONDS;
 
     const setupSection = document.getElementById('setup-section');
     const memorizeSection = document.getElementById('memorize-section');
@@ -150,6 +155,7 @@
     const wordCountInput = document.getElementById('word-count');
     const progressText = document.getElementById('progress-text');
     const wordDisplay = document.getElementById('word-display');
+    const timerText = document.getElementById('timer-text');
     const answerGrid = document.getElementById('answer-grid');
 
     document.getElementById('start-btn').addEventListener('click', startTraining);
@@ -163,6 +169,30 @@
 
     function shuffle(array) {
         return [...array].sort(() => Math.random() - 0.5);
+    }
+
+    function clearAutoAdvanceTimer() {
+        if (autoAdvanceTimer) {
+            clearInterval(autoAdvanceTimer);
+            autoAdvanceTimer = null;
+        }
+    }
+
+    function updateTimerText() {
+        timerText.innerText = `자동 다음까지 ${secondsLeft}초`;
+    }
+
+    function startAutoAdvanceTimer() {
+        clearAutoAdvanceTimer();
+        secondsLeft = AUTO_ADVANCE_SECONDS;
+        updateTimerText();
+        autoAdvanceTimer = setInterval(function() {
+            secondsLeft -= 1;
+            updateTimerText();
+            if (secondsLeft <= 0) {
+                showNextWord();
+            }
+        }, 1000);
     }
 
     function startTraining() {
@@ -180,9 +210,11 @@
         progressText.innerText = `${currentIndex + 1} / ${selectedWords.length}`;
         wordDisplay.innerText = selectedWords[currentIndex];
         document.getElementById('next-btn').innerText = currentIndex === selectedWords.length - 1 ? '입력하러 가기' : '다음 단어 보기';
+        startAutoAdvanceTimer();
     }
 
     function showNextWord() {
+        clearAutoAdvanceTimer();
         currentIndex += 1;
         if (currentIndex >= selectedWords.length) {
             showAnswerInputs();
@@ -192,6 +224,7 @@
     }
 
     function showAnswerInputs() {
+        clearAutoAdvanceTimer();
         memorizeSection.classList.add('hidden');
         answerSection.classList.remove('hidden');
         answerGrid.innerHTML = '';
@@ -210,6 +243,7 @@
     }
 
     function checkAnswers() {
+        clearAutoAdvanceTimer();
         const correctSet = new Set(selectedWords.map(normalize));
         const userAnswers = Array.from(answerGrid.querySelectorAll('input')).map(input => normalize(input.value)).filter(Boolean);
         const uniqueUserAnswers = [...new Set(userAnswers)];
@@ -230,6 +264,7 @@
     }
 
     function restart() {
+        clearAutoAdvanceTimer();
         selectedWords = [];
         currentIndex = 0;
         resultSection.classList.add('hidden');
