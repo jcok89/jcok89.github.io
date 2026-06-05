@@ -3,196 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>작업 기억력(Working Memory) 강화 훈련</title>
+    <title>Jake의 기억력 훈련실</title>
     <style>
+        * { box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Malgun Gothic', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #eef4ff 0%, #f8fbff 45%, #fff7ec 100%);
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px;
         }
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        .container {
+            width: min(980px, 100%);
+        }
+        header {
             text-align: center;
-            width: 360px;
+            margin-bottom: 28px;
         }
-        h2 { color: #333; margin-bottom: 20px; font-size: 1.5rem; }
-        .register-indicator {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #007bff;
-            margin-bottom: 10px;
-            background: #e7f3ff;
-            padding: 8px;
-            border-radius: 8px;
+        h1 {
+            margin: 0 0 10px;
+            font-size: clamp(2rem, 5vw, 3.1rem);
+            letter-spacing: -0.04em;
         }
-        .question {
-            font-size: 2.2rem;
-            font-weight: bold;
-            margin: 20px 0;
-            color: #222;
+        .subtitle {
+            margin: 0;
+            color: #64748b;
+            font-size: 1.05rem;
+            line-height: 1.7;
         }
-        input[type="number"] {
-            width: 80%;
-            padding: 12px;
-            font-size: 1.2rem;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            outline: none;
+        .program-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 18px;
+        }
+        .program-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 250px;
+            padding: 24px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.09);
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+        .program-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+        }
+        .badge {
+            display: inline-flex;
+            width: fit-content;
+            padding: 7px 11px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #2563eb;
+            background: #dbeafe;
+            margin-bottom: 16px;
+        }
+        .program-card:nth-child(2) .badge { color: #047857; background: #d1fae5; }
+        .program-card:nth-child(3) .badge { color: #b45309; background: #fef3c7; }
+        h2 {
+            margin: 0 0 12px;
+            font-size: 1.45rem;
+        }
+        .description {
+            margin: 0;
+            color: #64748b;
+            line-height: 1.65;
+        }
+        .start {
+            margin-top: 22px;
+            font-weight: 800;
+            color: #111827;
+        }
+        footer {
+            margin-top: 24px;
             text-align: center;
-            margin-bottom: 15px;
+            color: #94a3b8;
+            font-size: 0.9rem;
         }
-        input[type="number"]:focus { border-color: #007bff; }
-        button {
-            width: 85%;
-            padding: 12px;
-            font-size: 1.1rem;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        button:hover { background-color: #0056b3; }
-        .feedback {
-            margin-top: 15px;
-            font-size: 1rem;
-            line-height: 1.5;
-            min-height: 50px;
-        }
-        .success { color: #28a745; font-weight: bold; }
-        .error { color: #dc3545; font-weight: bold; }
-        .history { font-size: 0.9rem; color: #666; margin-top: 5px; }
     </style>
 </head>
 <body>
+    <main class="container">
+        <header>
+            <h1>Jake의 기억력 훈련실</h1>
+            <p class="subtitle">작업 기억, 단어 기억, 낯선 글자 기억을 따로 훈련할 수 있는 작은 연습실입니다.<br>원하는 프로그램을 선택해서 시작하세요.</p>
+        </header>
 
-<div class="card">
-    <h2>레지스터 기억력 훈련</h2>
-    <div id="register-name" class="register-indicator">메모리 A 차례</div>
-    <div id="question-text" class="question">준비중...</div>
-    
-    <input type="number" id="user-answer" placeholder="정답 입력" autocomplete="off" onkeyup="if(window.event.keyCode==13){checkAnswer()}">
-    <button onclick="checkAnswer()" id="action-btn">시작하기</button>
-    
-    <div id="feedback-text" class="feedback"></div>
-</div>
+        <section class="program-grid" aria-label="기억력 훈련 프로그램 목록">
+            <a class="program-card" href="working-memory.html">
+                <div>
+                    <span class="badge">계산 + 작업기억</span>
+                    <h2>작업 기억력 강화 훈련</h2>
+                    <p class="description">A/B/C 메모리 값을 번갈아 갱신하며 머릿속에 숫자를 유지하고 계산하는 훈련입니다.</p>
+                </div>
+                <div class="start">시작하기 →</div>
+            </a>
 
-<script>
-    // A, B, C 세 개의 독립된 메모리 공간 (초기값은 각각 1~9 사이의 무작위 수)
-    let registers = {
-        'A': Math.floor(Math.random() * 9) + 1,
-        'B': Math.floor(Math.random() * 9) + 1,
-        'C': Math.floor(Math.random() * 9) + 1
-    };
-    
-    let order = ['A', 'B', 'C'];
-    let currentIndex = 0;
-    let isInitialized = false;
-    
-    let currentOp = '';
-    let currentNum = 0;
-    let correctAnswer = 0;
-    let previousValue = 0; // 틀렸을 때 이전 값을 보여주기 위한 변수
+            <a class="program-card" href="word-memory.html">
+                <div>
+                    <span class="badge">국어 단어</span>
+                    <h2>단어기억훈련</h2>
+                    <p class="description">선택한 개수만큼 국어 단어를 하나씩 보고, 마지막에 기억나는 단어를 순서 상관없이 입력합니다.</p>
+                </div>
+                <div class="start">시작하기 →</div>
+            </a>
 
-    const regNameEl = document.getElementById('register-name');
-    const questionEl = document.getElementById('question-text');
-    const answerInput = document.getElementById('user-answer');
-    const btnEl = document.getElementById('action-btn');
-    const feedbackEl = document.getElementById('feedback-text');
+            <a class="program-card" href="letter-memory.html">
+                <div>
+                    <span class="badge">고유명사 감각</span>
+                    <h2>글자기억훈련</h2>
+                    <p class="description">한글 3~5자로 만들어진 낯선 문자열을 외우며, 사람 이름 같은 고유명사 기억을 강화합니다.</p>
+                </div>
+                <div class="start">시작하기 →</div>
+            </a>
+        </section>
 
-    // 게임 시작 및 초기화 단계
-    function initGame() {
-        regNameEl.innerText = "초기 세팅 기억하기";
-        questionEl.innerHTML = `A: <span style='color:#007bff'>${registers['A']}</span><br>B: <span style='color:#007bff'>${registers['B']}</span><br>C: <span style='color:#007bff'>${registers['C']}</span>`;
-        btnEl.innerText = "기억했습니다 (시작)";
-        answerInput.style.display = "none";
-        isInitialized = true;
-    }
-
-    // 다음 문제 생성 (A -> B -> C 순환)
-    function nextQuestion() {
-        answerInput.style.display = "inline-block";
-        answerInput.value = "";
-        answerInput.focus();
-        btnEl.innerText = "제출";
-
-        let currentReg = order[currentIndex];
-        regNameEl.innerText = `메모리 ${currentReg} 차례`;
-
-        // 연산 종류 결정 (+ 또는 -)
-        let ops = ['+', '-'];
-        currentOp = ops[Math.floor(Math.random() * ops.length)];
-        currentNum = Math.floor(Math.random() * 8) + 2; // 2~9 사이의 숫자
-
-        previousValue = registers[currentReg]; // 연산 전 원래 값 저장
-
-        if (currentOp === '+') {
-            correctAnswer = previousValue + currentNum;
-        } else {
-            // 음수 방지를 위해 빼는 수가 더 크면 더하기로 전환
-            if (previousValue - currentNum < 0) {
-                currentOp = '+';
-                correctAnswer = previousValue + currentNum;
-            } else {
-                correctAnswer = previousValue - currentNum;
-            }
-        }
-
-        questionEl.innerText = `이전 결과 ${currentOp} ${currentNum} = ?`;
-    }
-
-    // 정답 확인
-    function checkAnswer() {
-        if (!isInitialized) {
-            initGame();
-            return;
-        }
-        if (btnEl.innerText === "기억했습니다 (시작)" || btnEl.innerText === "틀렸습니다 (다음 진행)") {
-            nextQuestion();
-            return;
-        }
-
-        let userAnswer = parseInt(answerInput.value);
-        if (isNaN(userAnswer)) return;
-
-        let currentReg = order[currentIndex];
-
-        if (userAnswer === correctAnswer) {
-            feedbackEl.innerHTML = `<span class="success">정답입니다! 😊</span>`;
-            // 정답일 때만 해당 메모리 공간의 값을 업데이트
-            registers[currentReg] = correctAnswer;
-            
-            // 다음 레지스터로 이동 (A -> B -> C -> A)
-            currentIndex = (currentIndex + 1) % 3;
-            nextQuestion();
-        } else {
-            // 틀렸을 경우 피드백 표시 (이전 결과값을 노출)
-            feedbackEl.innerHTML = `
-                <span class="error">오답입니다! 😢</span><br>
-                <span class="history">메모리 ${currentReg}의 이전 값은 <b>${previousValue}</b> 였습니다.</span><br>
-                <span class="history">(정답은 ${previousValue} ${currentOp} ${currentNum} = ${correctAnswer})</span>
-            `;
-            // 틀렸을 때는 정답을 강제로 반영하여 다음 단계 진행이 가능하도록 처리
-            registers[currentReg] = correctAnswer;
-            currentIndex = (currentIndex + 1) % 3;
-            
-            btnEl.innerText = "틀렸습니다 (다음 진행)";
-            answerInput.style.display = "none";
-        }
-    }
-
-    // 첫 화면 세팅
-    questionEl.innerText = "클릭하여 시작하세요";
-    answerInput.style.display = "none";
-</script>
-
+        <footer>꾸준히 짧게 반복하는 것이 핵심입니다.</footer>
+    </main>
 </body>
 </html>
