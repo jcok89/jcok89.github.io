@@ -1,289 +1,52 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>글자기억훈련</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: 'Segoe UI', 'Malgun Gothic', Tahoma, Geneva, Verdana, sans-serif;
-            background: #fff7ed;
-            color: #1f2937;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .card {
-            width: min(560px, 100%);
-            background: white;
-            border-radius: 20px;
-            padding: 28px;
-            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
-            text-align: center;
-        }
-        .home-link {
-            display: inline-block;
-            margin-bottom: 14px;
-            color: #64748b;
-            text-decoration: none;
-            font-weight: 700;
-        }
-        .home-link:hover { color: #d97706; }
-        h1 { margin: 0 0 10px; font-size: 2rem; }
-        .description { margin: 0 0 22px; color: #64748b; line-height: 1.65; }
-        .setup-row {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-        }
-        input[type="number"], input[type="text"] {
-            padding: 12px 14px;
-            border: 2px solid #d1d5db;
-            border-radius: 10px;
-            font-size: 1rem;
-            outline: none;
-        }
-        input[type="number"] { width: 110px; text-align: center; }
-        input:focus { border-color: #f59e0b; }
-        button {
-            border: 0;
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-size: 1rem;
-            font-weight: 800;
-            background: #f59e0b;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover { background: #d97706; }
-        .word-display {
-            margin: 24px auto;
-            padding: 34px 20px;
-            border-radius: 18px;
-            background: #fffbeb;
-            color: #92400e;
-            font-size: clamp(2.2rem, 9vw, 4.4rem);
-            font-weight: 900;
-            letter-spacing: 0.08em;
-            min-height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .progress { color: #64748b; font-weight: 700; min-height: 24px; }
-        .timer { color: #b45309; font-weight: 800; min-height: 24px; margin-top: -10px; margin-bottom: 14px; }
-        .answer-grid {
-            display: grid;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .answer-grid input { width: 100%; }
-        .result {
-            margin-top: 18px;
-            text-align: left;
-            background: #f8fafc;
-            border-radius: 14px;
-            padding: 16px;
-            line-height: 1.7;
-        }
-        .result h2 { margin: 0 0 10px; text-align: center; }
-        .hidden { display: none; }
-        .correct { color: #047857; font-weight: 800; }
-        .wrong { color: #b91c1c; font-weight: 800; }
-        .pill-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-        .pill { background: #e2e8f0; border-radius: 999px; padding: 6px 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>글자기억훈련</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:'Segoe UI','Malgun Gothic',Tahoma,sans-serif;background:#fff7ed;color:#1f2937;display:flex;align-items:center;justify-content:center;padding:20px}.card{width:min(700px,100%);background:white;border-radius:20px;padding:28px;box-shadow:0 14px 35px rgba(15,23,42,.12);text-align:center}.home-link{display:inline-block;margin-bottom:14px;color:#64748b;text-decoration:none;font-weight:800}.home-link:hover{color:#d97706}h1{margin:0 0 10px;font-size:2rem}.description{margin:0 0 22px;color:#64748b;line-height:1.65}.setup-row{display:flex;gap:10px;justify-content:center;align-items:center;margin-bottom:14px;flex-wrap:wrap}input,select{padding:12px 14px;border:2px solid #d1d5db;border-radius:10px;font-size:1rem;outline:none}input[type=number]{width:110px;text-align:center}input:focus,select:focus{border-color:#f59e0b}button{border:0;border-radius:10px;padding:12px 16px;font-size:1rem;font-weight:800;background:#f59e0b;color:white;cursor:pointer}button:hover{background:#d97706}.secondary{background:#334155}.word-display{margin:24px auto;padding:34px 20px;border-radius:18px;background:#fffbeb;color:#92400e;font-size:clamp(2.2rem,9vw,4.4rem);font-weight:900;letter-spacing:.08em;min-height:150px;display:flex;align-items:center;justify-content:center}.progress{color:#64748b;font-weight:800;min-height:24px}.timer{color:#b45309;font-weight:800;min-height:24px;margin-top:-10px;margin-bottom:14px}.answer-grid{display:grid;gap:10px;margin:20px 0}.answer-grid input{width:100%}.result{margin-top:18px;text-align:left;background:#f8fafc;border-radius:14px;padding:16px;line-height:1.7}.result h2{text-align:center}.hidden{display:none}.correct{color:#047857;font-weight:900}.wrong{color:#b91c1c;font-weight:900}.pill-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.pill{background:#e2e8f0;border-radius:999px;padding:6px 10px;font-weight:800}.hit{background:#dcfce7;color:#047857}.miss{background:#fee2e2;color:#b91c1c}.meta{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:14px 0}.chip{display:inline-flex;padding:6px 10px;border-radius:999px;background:#e2e8f0;font-weight:800;color:#475569}.chart-wrap{background:white;border:1px solid #e2e8f0;border-radius:14px;padding:12px;margin-top:14px}canvas{width:100%;height:150px}.button-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  </style>
 </head>
 <body>
-    <main class="card">
-        <a href="index.html" class="home-link">← 훈련실로 돌아가기</a>
-        <h1>글자기억훈련</h1>
-        <p class="description">한글 3~5자로 구성된 낯선 문자열을 하나씩 기억합니다. 사람 이름처럼 익숙하지 않은 고유명사를 붙잡아 두는 연습용입니다.</p>
-
-        <section id="setup-section">
-            <div class="setup-row">
-                <label for="word-count">글자 묶음 수</label>
-                <input type="number" id="word-count" min="1" max="20" value="5" autocomplete="off">
-                <button id="start-btn">시작</button>
-            </div>
-            <p class="progress">3~5글자의 임의 한글 문자열이 생성됩니다.</p>
-        </section>
-
-        <section id="memorize-section" class="hidden">
-            <div class="progress" id="progress-text"></div>
-            <div class="word-display" id="word-display"></div>
-            <div class="timer" id="timer-text"></div>
-            <button id="next-btn">다음 글자 보기</button>
-        </section>
-
-        <section id="answer-section" class="hidden">
-            <p class="progress">기억나는 글자 묶음을 입력하세요. 순서는 상관없습니다.</p>
-            <div id="answer-grid" class="answer-grid"></div>
-            <button id="check-btn">채점하기</button>
-        </section>
-
-        <section id="result-section" class="result hidden"></section>
-    </main>
-
+  <main class="card">
+    <a href="index.html" class="home-link">← 훈련실로 돌아가기</a><h1>글자기억훈련</h1>
+    <p class="description">랜덤 한글 문자열 또는 사람 이름형 고유명사를 기억합니다. 오답은 가중치와 1·3·7일 복습에 반영됩니다.</p>
+    <section id="setup-section">
+      <div class="setup-row"><label for="word-count">글자 묶음 수</label><input type="number" id="word-count" min="1" max="20" value="5" autocomplete="off"><select id="pool-mode"><option value="random" selected>랜덤 글자</option><option value="names">사람 이름형</option><option value="mixed">섞기</option></select><button id="start-btn">시작</button><button class="secondary" id="review-btn">오늘 복습</button></div>
+      <div class="meta"><span class="chip" id="name-status">이름 데이터 준비 중</span><span class="chip" id="review-status">복습 0개</span><span class="chip" id="history-status">기록 0회</span></div>
+      <div class="chart-wrap"><canvas id="history-chart" width="640" height="150"></canvas></div>
+      <p class="progress">사람 이름형 모드는 고유명사를 기억하는 느낌으로 훈련하기 위한 별도 풀입니다.</p>
+    </section>
+    <section id="memorize-section" class="hidden"><div class="progress" id="progress-text"></div><div class="word-display" id="word-display"></div><div class="timer" id="timer-text"></div><button id="next-btn">다음 글자 보기</button></section>
+    <section id="answer-section" class="hidden"><p class="progress">기억나는 글자 묶음을 입력하세요. 순서는 상관없습니다.</p><div id="answer-grid" class="answer-grid"></div><button id="check-btn">채점하기</button></section>
+    <section id="result-section" class="result hidden"></section>
+  </main>
+<script src="memory-utils.js"></script>
 <script>
-    const CHO = ['가','나','다','라','마','바','사','아','자','차','카','타','파','하','고','노','도','로','모','보','소','오','조','초','코','토','포','호','구','누','두','루','무','부','수','우','주','추','쿠','투','푸','후','기','니','디','리','미','비','시','이','지','치','키','티','피','히'];
-    const MID = ['건','난','달','람','민','빈','산','연','준','찬','린','솔','율','현','겸','담','원','석','윤','혁','진','태','림','별','온','결','재','훈','도','하'];
-    const END = ['아','나','라','미','서','유','은','오','재','하','린','온','솔','별','담','겸','준','현','율','도','원','진','찬','민','수','리','빈','연','우','태'];
-    const SYLLABLE_POOL = [...CHO, ...MID, ...END];
-    const AUTO_ADVANCE_SECONDS = 10;
-
-    let selectedWords = [];
-    let currentIndex = 0;
-    let autoAdvanceTimer = null;
-    let secondsLeft = AUTO_ADVANCE_SECONDS;
-
-    const setupSection = document.getElementById('setup-section');
-    const memorizeSection = document.getElementById('memorize-section');
-    const answerSection = document.getElementById('answer-section');
-    const resultSection = document.getElementById('result-section');
-    const wordCountInput = document.getElementById('word-count');
-    const progressText = document.getElementById('progress-text');
-    const wordDisplay = document.getElementById('word-display');
-    const timerText = document.getElementById('timer-text');
-    const answerGrid = document.getElementById('answer-grid');
-
-    document.getElementById('start-btn').addEventListener('click', startTraining);
-    document.getElementById('next-btn').addEventListener('click', showNextWord);
-    document.getElementById('check-btn').addEventListener('click', checkAnswers);
-
-    document.addEventListener('keyup', function(event) {
-        if (event.key !== 'Enter') return;
-        if (!memorizeSection.classList.contains('hidden')) showNextWord();
-    });
-
-    function randomItem(array) {
-        return array[Math.floor(Math.random() * array.length)];
-    }
-
-    function makeRandomKoreanString() {
-        const length = Math.floor(Math.random() * 3) + 3;
-        let text = '';
-        for (let i = 0; i < length; i++) {
-            text += randomItem(SYLLABLE_POOL);
-        }
-        return text;
-    }
-
-    function generateUniqueStrings(count) {
-        const result = new Set();
-        while (result.size < count) {
-            result.add(makeRandomKoreanString());
-        }
-        return [...result];
-    }
-
-    function clearAutoAdvanceTimer() {
-        if (autoAdvanceTimer) {
-            clearInterval(autoAdvanceTimer);
-            autoAdvanceTimer = null;
-        }
-    }
-
-    function updateTimerText() {
-        timerText.innerText = `자동 다음까지 ${secondsLeft}초`;
-    }
-
-    function startAutoAdvanceTimer() {
-        clearAutoAdvanceTimer();
-        secondsLeft = AUTO_ADVANCE_SECONDS;
-        updateTimerText();
-        autoAdvanceTimer = setInterval(function() {
-            secondsLeft -= 1;
-            updateTimerText();
-            if (secondsLeft <= 0) {
-                showNextWord();
-            }
-        }, 1000);
-    }
-
-    function startTraining() {
-        const count = Math.max(1, Math.min(20, parseInt(wordCountInput.value, 10) || 5));
-        selectedWords = generateUniqueStrings(count);
-        currentIndex = 0;
-        setupSection.classList.add('hidden');
-        resultSection.classList.add('hidden');
-        answerSection.classList.add('hidden');
-        memorizeSection.classList.remove('hidden');
-        showCurrentWord();
-    }
-
-    function showCurrentWord() {
-        progressText.innerText = `${currentIndex + 1} / ${selectedWords.length}`;
-        wordDisplay.innerText = selectedWords[currentIndex];
-        document.getElementById('next-btn').innerText = currentIndex === selectedWords.length - 1 ? '입력하러 가기' : '다음 글자 보기';
-        startAutoAdvanceTimer();
-    }
-
-    function showNextWord() {
-        clearAutoAdvanceTimer();
-        currentIndex += 1;
-        if (currentIndex >= selectedWords.length) {
-            showAnswerInputs();
-            return;
-        }
-        showCurrentWord();
-    }
-
-    function showAnswerInputs() {
-        clearAutoAdvanceTimer();
-        memorizeSection.classList.add('hidden');
-        answerSection.classList.remove('hidden');
-        answerGrid.innerHTML = '';
-        for (let i = 0; i < selectedWords.length; i++) {
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.placeholder = `${i + 1}번째 기억 글자`;
-            input.autocomplete = 'off';
-            answerGrid.appendChild(input);
-        }
-        answerGrid.querySelector('input').focus();
-    }
-
-    function normalize(value) {
-        return value.trim().replace(/\s+/g, '');
-    }
-
-    function checkAnswers() {
-        clearAutoAdvanceTimer();
-        const correctSet = new Set(selectedWords.map(normalize));
-        const userAnswers = Array.from(answerGrid.querySelectorAll('input')).map(input => normalize(input.value)).filter(Boolean);
-        const uniqueUserAnswers = [...new Set(userAnswers)];
-        const matched = uniqueUserAnswers.filter(answer => correctSet.has(answer));
-
-        resultSection.innerHTML = `
-            <h2>${matched.length} / ${selectedWords.length}개 정답</h2>
-            <p><span class="correct">맞춘 글자:</span></p>
-            <div class="pill-list">${matched.length ? matched.map(word => `<span class="pill">${word}</span>`).join('') : '<span class="pill">없음</span>'}</div>
-            <p><span class="correct">정답:</span></p>
-            <div class="pill-list">${selectedWords.map(word => `<span class="pill">${word}</span>`).join('')}</div>
-            <p><span class="wrong">내가 쓴 것:</span></p>
-            <div class="pill-list">${uniqueUserAnswers.length ? uniqueUserAnswers.map(word => `<span class="pill">${word}</span>`).join('') : '<span class="pill">입력 없음</span>'}</div>
-            <p style="text-align:center; margin-top:18px;"><button onclick="restart()">다시 하기</button></p>
-        `;
-        answerSection.classList.add('hidden');
-        resultSection.classList.remove('hidden');
-    }
-
-    function restart() {
-        clearAutoAdvanceTimer();
-        selectedWords = [];
-        currentIndex = 0;
-        resultSection.classList.add('hidden');
-        setupSection.classList.remove('hidden');
-        wordCountInput.focus();
-    }
+  const PROGRAM='letter-memory',AUTO_ADVANCE_SECONDS=10;
+  const CHO=['가','나','다','라','마','바','사','아','자','차','카','타','파','하','고','노','도','로','모','보','소','오','조','초','코','토','포','호','구','누','두','루','무','부','수','우','주','추','쿠','투','푸','후','기','니','디','리','미','비','시','이','지','치','키','티','피','히'];
+  const MID=['건','난','달','람','민','빈','산','연','준','찬','린','솔','율','현','겸','담','원','석','윤','혁','진','태','림','별','온','결','재','훈','도','하'];
+  const END=['아','나','라','미','서','유','은','오','재','하','린','온','솔','별','담','겸','준','현','율','도','원','진','찬','민','수','리','빈','연','우','태'];
+  const SYLLABLE_POOL=[...CHO,...MID,...END];let namePool=[],selectedWords=[],currentIndex=0,autoAdvanceTimer=null,secondsLeft=AUTO_ADVANCE_SECONDS,isReviewMode=false;
+  const setupSection=document.getElementById('setup-section'),memorizeSection=document.getElementById('memorize-section'),answerSection=document.getElementById('answer-section'),resultSection=document.getElementById('result-section'),wordCountInput=document.getElementById('word-count'),poolMode=document.getElementById('pool-mode'),nameStatus=document.getElementById('name-status'),reviewStatus=document.getElementById('review-status'),historyStatus=document.getElementById('history-status'),progressText=document.getElementById('progress-text'),wordDisplay=document.getElementById('word-display'),timerText=document.getElementById('timer-text'),answerGrid=document.getElementById('answer-grid');
+  document.getElementById('start-btn').addEventListener('click',()=>startTraining(false));document.getElementById('review-btn').addEventListener('click',()=>startTraining(true));document.getElementById('next-btn').addEventListener('click',showNextWord);document.getElementById('check-btn').addEventListener('click',checkAnswers);document.addEventListener('keyup',e=>{if(e.key==='Enter'&&!memorizeSection.classList.contains('hidden'))showNextWord();});init();
+  async function init(){try{const r=await fetch('name-bank.json',{cache:'no-store'});const data=await r.json();namePool=data.groups.flatMap(g=>g.names);}catch(e){namePool=['강도윤','서하린','민재온','라온도','도윤겸','지율담','하도린','유겸서'];}nameStatus.innerText=`이름형 ${namePool.length}개`;updateStats();}
+  function randomItem(a){return a[Math.floor(Math.random()*a.length)];}
+  function makeRandomKoreanString(){const len=Math.floor(Math.random()*3)+3;let t='';for(let i=0;i<len;i++)t+=randomItem(SYLLABLE_POOL);return t;}
+  function generateRandom(count){const s=new Set();while(s.size<count)s.add(makeRandomKoreanString());return [...s];}
+  function shuffle(a){const c=[...a];for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]];}return c;}
+  function updateStats(){const s=MemoryTrainer.summary(PROGRAM);reviewStatus.innerText=`오늘 복습 ${s.due}개`;historyStatus.innerText=`기록 ${s.totalSessions}회${s.lastScore!==null?` · 최근 ${s.lastScore}점`:''}`;MemoryTrainer.drawChart('history-chart',PROGRAM);}
+  function basePool(count){if(poolMode.value==='names')return namePool;if(poolMode.value==='mixed')return [...namePool,...generateRandom(count*3)];return generateRandom(Math.max(30,count*4));}
+  function startTraining(reviewOnly){let pool;const count=Math.max(1,Math.min(20,parseInt(wordCountInput.value,10)||5));if(reviewOnly){pool=MemoryTrainer.reviewWords(PROGRAM);if(!pool.length){alert('오늘 복습할 글자가 없습니다.');return;}isReviewMode=true;}else{pool=MemoryTrainer.weightedPool(basePool(count),PROGRAM);isReviewMode=false;}selectedWords=[...new Set(shuffle(pool))].slice(0,count);currentIndex=0;setupSection.classList.add('hidden');resultSection.classList.add('hidden');answerSection.classList.add('hidden');memorizeSection.classList.remove('hidden');showCurrentWord();}
+  function clearTimer(){if(autoAdvanceTimer){clearInterval(autoAdvanceTimer);autoAdvanceTimer=null;}}
+  function startTimer(){clearTimer();secondsLeft=AUTO_ADVANCE_SECONDS;timerText.innerText=`자동 다음까지 ${secondsLeft}초`;autoAdvanceTimer=setInterval(()=>{secondsLeft-=1;timerText.innerText=`자동 다음까지 ${secondsLeft}초`;if(secondsLeft<=0)showNextWord();},1000);}
+  function showCurrentWord(){progressText.innerText=`${currentIndex+1} / ${selectedWords.length}${isReviewMode?' · 복습':''}`;wordDisplay.innerText=selectedWords[currentIndex];document.getElementById('next-btn').innerText=currentIndex===selectedWords.length-1?'입력하러 가기':'다음 글자 보기';startTimer();}
+  function showNextWord(){clearTimer();currentIndex+=1;if(currentIndex>=selectedWords.length){showAnswerInputs();return;}showCurrentWord();}
+  function showAnswerInputs(){clearTimer();memorizeSection.classList.add('hidden');answerSection.classList.remove('hidden');answerGrid.innerHTML='';selectedWords.forEach((_,i)=>{const input=document.createElement('input');input.type='text';input.placeholder=`${i+1}번째 기억 글자`;input.autocomplete='off';answerGrid.appendChild(input);});answerGrid.querySelector('input').focus();}
+  function normalize(v){return MemoryTrainer.norm(v);}
+  function checkAnswers(){clearTimer();const correctSet=new Set(selectedWords.map(normalize));const user=[...new Set(Array.from(answerGrid.querySelectorAll('input')).map(i=>normalize(i.value)).filter(Boolean))];const matched=user.filter(w=>correctSet.has(w));const missed=selectedWords.filter(w=>!matched.includes(w));MemoryTrainer.recordSession(PROGRAM,selectedWords,matched,{review:isReviewMode,mode:poolMode.value});resultSection.innerHTML=`<h2>${matched.length} / ${selectedWords.length}개 정답</h2><p><span class="correct">맞춘 글자:</span></p><div class="pill-list">${matched.length?matched.map(w=>`<span class="pill hit">${w}</span>`).join(''):'<span class="pill">없음</span>'}</div><p><span class="wrong">놓친 글자:</span></p><div class="pill-list">${missed.length?missed.map(w=>`<span class="pill miss">${w}</span>`).join(''):'<span class="pill hit">없음</span>'}</div><p><span class="wrong">내가 쓴 것:</span></p><div class="pill-list">${user.length?user.map(w=>`<span class="pill">${w}</span>`).join(''):'<span class="pill">입력 없음</span>'}</div><p style="text-align:center;margin-top:18px"><button onclick="restart()">다시 하기</button></p>`;answerSection.classList.add('hidden');resultSection.classList.remove('hidden');}
+  function restart(){selectedWords=[];currentIndex=0;resultSection.classList.add('hidden');setupSection.classList.remove('hidden');updateStats();wordCountInput.focus();}
 </script>
 </body>
 </html>
