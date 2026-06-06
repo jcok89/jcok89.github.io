@@ -1,289 +1,69 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>단어기억훈련</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: 'Segoe UI', 'Malgun Gothic', Tahoma, Geneva, Verdana, sans-serif;
-            background: #eef7f2;
-            color: #1f2937;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .card {
-            width: min(560px, 100%);
-            background: white;
-            border-radius: 20px;
-            padding: 28px;
-            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
-            text-align: center;
-        }
-        .home-link {
-            display: inline-block;
-            margin-bottom: 14px;
-            color: #64748b;
-            text-decoration: none;
-            font-weight: 700;
-        }
-        .home-link:hover { color: #047857; }
-        h1 { margin: 0 0 10px; font-size: 2rem; }
-        .description { margin: 0 0 22px; color: #64748b; line-height: 1.65; }
-        .setup-row {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-        }
-        input[type="number"], input[type="text"] {
-            padding: 12px 14px;
-            border: 2px solid #d1d5db;
-            border-radius: 10px;
-            font-size: 1rem;
-            outline: none;
-        }
-        input[type="number"] { width: 110px; text-align: center; }
-        input:focus { border-color: #10b981; }
-        button {
-            border: 0;
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-size: 1rem;
-            font-weight: 800;
-            background: #10b981;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover { background: #059669; }
-        .word-display {
-            margin: 24px auto;
-            padding: 34px 20px;
-            border-radius: 18px;
-            background: #ecfdf5;
-            color: #065f46;
-            font-size: clamp(2.2rem, 9vw, 4.4rem);
-            font-weight: 900;
-            letter-spacing: 0.04em;
-            min-height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .progress { color: #64748b; font-weight: 700; min-height: 24px; }
-        .timer { color: #047857; font-weight: 800; min-height: 24px; margin-top: -10px; margin-bottom: 14px; }
-        .answer-grid {
-            display: grid;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .answer-grid input { width: 100%; }
-        .result {
-            margin-top: 18px;
-            text-align: left;
-            background: #f8fafc;
-            border-radius: 14px;
-            padding: 16px;
-            line-height: 1.7;
-        }
-        .result h2 { margin: 0 0 10px; text-align: center; }
-        .hidden { display: none; }
-        .correct { color: #047857; font-weight: 800; }
-        .wrong { color: #b91c1c; font-weight: 800; }
-        .pill-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-        .pill { background: #e2e8f0; border-radius: 999px; padding: 6px 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>단어기억훈련</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:'Segoe UI','Malgun Gothic',Tahoma,sans-serif;background:linear-gradient(135deg,#ecfdf5,#f8fafc 55%,#eef2ff);color:#1f2937;display:flex;align-items:center;justify-content:center;padding:20px}.card{width:min(820px,100%);background:rgba(255,255,255,.96);border-radius:24px;padding:28px;box-shadow:0 18px 45px rgba(15,23,42,.14);border:1px solid rgba(148,163,184,.25)}.top{text-align:center}.home-link{display:inline-block;margin-bottom:14px;color:#64748b;text-decoration:none;font-weight:800}.home-link:hover{color:#047857}h1{margin:0 0 10px;font-size:clamp(2rem,5vw,3rem);letter-spacing:-.04em}.description{margin:0 auto 20px;color:#64748b;line-height:1.7;max-width:680px}.panel{background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:18px;margin-top:18px}.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;text-align:left}label{display:block;font-weight:900;color:#334155;margin-bottom:6px;font-size:.92rem}input,select{width:100%;padding:12px 13px;border:2px solid #d1d5db;border-radius:12px;font-size:1rem;outline:none;background:white}input:focus,select:focus{border-color:#10b981}button{border:0;border-radius:12px;padding:13px 18px;font-size:1rem;font-weight:900;background:#10b981;color:white;cursor:pointer}button:hover{background:#059669}.secondary{background:#334155}.secondary:hover{background:#1f2937}.button-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}.meta{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:14px;color:#475569;font-size:.92rem}.chip{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#e2e8f0;font-weight:800}.word-display{margin:22px auto 14px;padding:36px 20px;border-radius:22px;background:#ecfdf5;color:#065f46;font-size:clamp(2.8rem,10vw,5.8rem);font-weight:950;letter-spacing:.04em;min-height:180px;display:flex;align-items:center;justify-content:center;text-align:center;word-break:keep-all;border:1px solid #bbf7d0}.progress,.timer{text-align:center;font-weight:900;color:#64748b;min-height:24px}.timer{color:#047857;margin-bottom:12px}.answer-grid{display:grid;gap:10px;margin:18px 0}.answer-grid input{width:100%}.result{margin-top:18px;background:#f8fafc;border-radius:18px;padding:18px;border:1px solid #e2e8f0;line-height:1.7}.result h2{text-align:center;margin:0 0 12px}.hidden{display:none}.correct{color:#047857;font-weight:900}.wrong{color:#b91c1c;font-weight:900}.pill-list{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 16px}.pill{background:#e2e8f0;border-radius:999px;padding:7px 11px;font-weight:800}.pill.hit{background:#dcfce7;color:#047857}.pill.miss{background:#fee2e2;color:#b91c1c}.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:14px 0}.summary-box{background:white;border:1px solid #e2e8f0;border-radius:14px;padding:12px}.summary-box strong{display:block;color:#0f172a}.small-note{color:#64748b;font-size:.92rem;line-height:1.6}
+  </style>
 </head>
 <body>
-    <main class="card">
-        <a href="index.html" class="home-link">← 훈련실로 돌아가기</a>
-        <h1>단어기억훈련</h1>
-        <p class="description">국어 단어를 하나씩 보고 기억해 보세요. 마지막에 입력한 단어가 정답 목록에 있으면 순서와 상관없이 맞은 것으로 처리됩니다.</p>
+  <main class="card">
+    <div class="top">
+      <a href="index.html" class="home-link">← 훈련실로 돌아가기</a>
+      <h1>단어기억훈련</h1>
+      <p class="description">단어 데이터를 별도 파일에서 불러오고, 글자 수·품사·난이도·주제를 골라 훈련합니다. 기본값은 너무 짧은 단어를 피하기 위해 3글자 이상으로 설정되어 있습니다.</p>
+    </div>
 
-        <section id="setup-section">
-            <div class="setup-row">
-                <label for="word-count">단어 수</label>
-                <input type="number" id="word-count" min="1" max="20" value="5" autocomplete="off">
-                <button id="start-btn">시작</button>
-            </div>
-            <p class="progress">추천: 처음에는 5개부터 시작하세요. 5자 이하의 명사·동사·형용사·사자성어가 섞여 나옵니다.</p>
-        </section>
+    <section id="setup-section" class="panel">
+      <div class="controls">
+        <div><label for="word-count">단어 수</label><input type="number" id="word-count" min="1" max="50" value="7" autocomplete="off"></div>
+        <div><label for="length-filter">글자 수</label><select id="length-filter"><option value="3plus" selected>3글자 이상</option><option value="4plus">4글자 이상</option><option value="4to6">4~6글자</option><option value="3to5">3~5글자</option><option value="all">전체</option></select></div>
+        <div><label for="type-filter">품사</label><select id="type-filter"><option value="all" selected>전체</option><option value="명사">명사</option><option value="동사">동사</option><option value="형용사">형용사</option></select></div>
+        <div><label for="level-filter">난이도</label><select id="level-filter"><option value="all" selected>전체</option><option value="초급">초급</option><option value="중급">중급</option><option value="고급">고급</option></select></div>
+        <div><label for="category-filter">주제</label><select id="category-filter"><option value="all" selected>전체</option></select></div>
+        <div><label for="timer-select">표시 시간</label><select id="timer-select"><option value="5">5초</option><option value="10" selected>10초</option><option value="15">15초</option><option value="0">자동 진행 끄기</option></select></div>
+      </div>
+      <div class="meta"><span class="chip" id="bank-status">단어 데이터 불러오는 중...</span><span class="chip" id="filter-status">필터 결과 계산 전</span></div>
+      <div class="button-row"><button id="start-btn">훈련 시작</button><button class="secondary" id="preview-btn" type="button">필터 미리보기</button></div>
+      <p class="small-note" style="text-align:center;margin-bottom:0">추천: 7개, 3글자 이상, 전체 품사로 시작한 뒤 점점 4글자 이상이나 고급 단어로 올려 보세요.</p>
+    </section>
 
-        <section id="memorize-section" class="hidden">
-            <div class="progress" id="progress-text"></div>
-            <div class="word-display" id="word-display"></div>
-            <div class="timer" id="timer-text"></div>
-            <button id="next-btn">다음 단어 보기</button>
-        </section>
+    <section id="memorize-section" class="hidden">
+      <div class="progress" id="progress-text"></div><div class="word-display" id="word-display"></div><div class="timer" id="timer-text"></div>
+      <div class="button-row"><button id="next-btn">다음 단어 보기</button></div>
+    </section>
 
-        <section id="answer-section" class="hidden">
-            <p class="progress">기억나는 단어를 입력하세요. 순서는 상관없습니다.</p>
-            <div id="answer-grid" class="answer-grid"></div>
-            <button id="check-btn">채점하기</button>
-        </section>
+    <section id="answer-section" class="hidden panel">
+      <p class="progress">기억나는 단어를 입력하세요. 순서는 상관없습니다.</p><div id="answer-grid" class="answer-grid"></div>
+      <div class="button-row"><button id="check-btn">채점하기</button></div>
+    </section>
 
-        <section id="result-section" class="result hidden"></section>
-    </main>
+    <section id="result-section" class="result hidden"></section>
+  </main>
 
 <script>
-    const WORD_BANK = [
-        // 명사
-        '나무','바다','하늘','구름','바람','햇살','달빛','별빛','강물','호수','산길','꽃잎','열매','숲속','아침','저녁','마음','기억','생각','희망',
-        '용기','지혜','시간','약속','친구','가족','노래','그림','책상','연필','공책','창문','의자','시계','전화','사진','편지','도서관','학교','마을',
-        '시장','기차','버스','자전거','공원','다리','도로','가방','신발','모자','우산','사과','바나나','포도','딸기','수박','감자','고구마','김치','국수',
-        '커피','우유','빵집','식당','바위','모래','파도','새벽','노을','겨울','봄날','여름','가을','눈꽃','소나기','무지개','나침반','지도','여행','언덕',
-        '계단','문장','단어','이야기','질문','대답','연습','집중','속도','균형','리듬','소리','향기','온도','불빛','그늘','정원','씨앗','상자','열쇠',
-        '거울','물병','수건','라디오','신문','달력','컴퓨터','화면','버튼','숫자','계산','문제','정답','오답','훈련','습관','성장','기술','반도체','자동차',
-        '기억력','집중력','상상력','호기심','가능성','책임감','독서','철학','음악','영화','역사','과학','운동','건강','일상','목표','계획','실천','대화','발표',
-        // 동사/동작 표현
-        '걷다','뛰다','읽다','쓰다','듣다','보다','말하다','외우다','익히다','배우다','고치다','만들다','그리다','부르다','찾다','묻다','답하다','열다','닫다','앉다',
-        '서다','웃다','울다','쉬다','자다','깨다','먹다','마시다','잡다','놓다','밀다','당기다','오르다','내리다','돌보다','기다리다','생각하다','기억하다','훈련하다','집중하다',
-        '정리하다','비교하다','분석하다','설명하다','반복하다','시도하다','도전하다','성장하다','확인하다','계산하다','기록하다','선택하다','연결하다','상상하다','준비하다','연습하다',
-        // 형용사/상태 표현
-        '맑다','흐리다','밝다','어둡다','높다','낮다','깊다','얕다','넓다','좁다','빠르다','느리다','가볍다','무겁다','차갑다','뜨겁다','따뜻하다','시원하다','조용하다','시끄럽다',
-        '새롭다','낯설다','익숙하다','중요하다','간단하다','복잡하다','정확하다','부드럽다','단단하다','즐겁다','슬프다','기쁘다','무섭다','강하다','약하다','길다','짧다','크다','작다','좋다',
-        // 사자성어/한자성어
-        '일석이조','사면초가','고진감래','동문서답','작심삼일','자업자득','유비무환','대기만성','과유불급','청출어람','금상첨화','전화위복','우공이산','새옹지마','각골난망',
-        '결자해지','군계일학','권선징악','난공불락','다다익선','마이동풍','명불허전','문전성시','박학다식','백전백승','부전자전','불철주야','상부상조','선견지명','설상가상',
-        '십시일반','안하무인','역지사지','오리무중','용두사미','이심전심','일취월장','입신양명','전전긍긍','조삼모사','천고마비','초지일관','풍전등화','호시탐탐','화룡점정'
-    ];
-
-    const AUTO_ADVANCE_SECONDS = 10;
-    let selectedWords = [];
-    let currentIndex = 0;
-    let autoAdvanceTimer = null;
-    let secondsLeft = AUTO_ADVANCE_SECONDS;
-
-    const setupSection = document.getElementById('setup-section');
-    const memorizeSection = document.getElementById('memorize-section');
-    const answerSection = document.getElementById('answer-section');
-    const resultSection = document.getElementById('result-section');
-    const wordCountInput = document.getElementById('word-count');
-    const progressText = document.getElementById('progress-text');
-    const wordDisplay = document.getElementById('word-display');
-    const timerText = document.getElementById('timer-text');
-    const answerGrid = document.getElementById('answer-grid');
-
-    document.getElementById('start-btn').addEventListener('click', startTraining);
-    document.getElementById('next-btn').addEventListener('click', showNextWord);
-    document.getElementById('check-btn').addEventListener('click', checkAnswers);
-
-    document.addEventListener('keyup', function(event) {
-        if (event.key !== 'Enter') return;
-        if (!memorizeSection.classList.contains('hidden')) showNextWord();
-    });
-
-    function shuffle(array) {
-        return [...array].sort(() => Math.random() - 0.5);
-    }
-
-    function clearAutoAdvanceTimer() {
-        if (autoAdvanceTimer) {
-            clearInterval(autoAdvanceTimer);
-            autoAdvanceTimer = null;
-        }
-    }
-
-    function updateTimerText() {
-        timerText.innerText = `자동 다음까지 ${secondsLeft}초`;
-    }
-
-    function startAutoAdvanceTimer() {
-        clearAutoAdvanceTimer();
-        secondsLeft = AUTO_ADVANCE_SECONDS;
-        updateTimerText();
-        autoAdvanceTimer = setInterval(function() {
-            secondsLeft -= 1;
-            updateTimerText();
-            if (secondsLeft <= 0) {
-                showNextWord();
-            }
-        }, 1000);
-    }
-
-    function startTraining() {
-        const count = Math.max(1, Math.min(20, parseInt(wordCountInput.value, 10) || 5));
-        selectedWords = shuffle(WORD_BANK).slice(0, count);
-        currentIndex = 0;
-        setupSection.classList.add('hidden');
-        resultSection.classList.add('hidden');
-        answerSection.classList.add('hidden');
-        memorizeSection.classList.remove('hidden');
-        showCurrentWord();
-    }
-
-    function showCurrentWord() {
-        progressText.innerText = `${currentIndex + 1} / ${selectedWords.length}`;
-        wordDisplay.innerText = selectedWords[currentIndex];
-        document.getElementById('next-btn').innerText = currentIndex === selectedWords.length - 1 ? '입력하러 가기' : '다음 단어 보기';
-        startAutoAdvanceTimer();
-    }
-
-    function showNextWord() {
-        clearAutoAdvanceTimer();
-        currentIndex += 1;
-        if (currentIndex >= selectedWords.length) {
-            showAnswerInputs();
-            return;
-        }
-        showCurrentWord();
-    }
-
-    function showAnswerInputs() {
-        clearAutoAdvanceTimer();
-        memorizeSection.classList.add('hidden');
-        answerSection.classList.remove('hidden');
-        answerGrid.innerHTML = '';
-        for (let i = 0; i < selectedWords.length; i++) {
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.placeholder = `${i + 1}번째 기억 단어`;
-            input.autocomplete = 'off';
-            answerGrid.appendChild(input);
-        }
-        answerGrid.querySelector('input').focus();
-    }
-
-    function normalize(value) {
-        return value.trim().replace(/\s+/g, '');
-    }
-
-    function checkAnswers() {
-        clearAutoAdvanceTimer();
-        const correctSet = new Set(selectedWords.map(normalize));
-        const userAnswers = Array.from(answerGrid.querySelectorAll('input')).map(input => normalize(input.value)).filter(Boolean);
-        const uniqueUserAnswers = [...new Set(userAnswers)];
-        const matched = uniqueUserAnswers.filter(answer => correctSet.has(answer));
-
-        resultSection.innerHTML = `
-            <h2>${matched.length} / ${selectedWords.length}개 정답</h2>
-            <p><span class="correct">맞춘 단어:</span></p>
-            <div class="pill-list">${matched.length ? matched.map(word => `<span class="pill">${word}</span>`).join('') : '<span class="pill">없음</span>'}</div>
-            <p><span class="correct">정답:</span></p>
-            <div class="pill-list">${selectedWords.map(word => `<span class="pill">${word}</span>`).join('')}</div>
-            <p><span class="wrong">내가 쓴 것:</span></p>
-            <div class="pill-list">${uniqueUserAnswers.length ? uniqueUserAnswers.map(word => `<span class="pill">${word}</span>`).join('') : '<span class="pill">입력 없음</span>'}</div>
-            <p style="text-align:center; margin-top:18px;"><button onclick="restart()">다시 하기</button></p>
-        `;
-        answerSection.classList.add('hidden');
-        resultSection.classList.remove('hidden');
-    }
-
-    function restart() {
-        clearAutoAdvanceTimer();
-        selectedWords = [];
-        currentIndex = 0;
-        resultSection.classList.add('hidden');
-        setupSection.classList.remove('hidden');
-        wordCountInput.focus();
-    }
+  const FALLBACK_WORDS=[{"word":"가능성","type":"명사","level":"초급","category":"일상","length":3},{"word":"책임감","type":"명사","level":"초급","category":"일상","length":3},{"word":"집중력","type":"명사","level":"초급","category":"일상","length":3},{"word":"상상력","type":"명사","level":"초급","category":"일상","length":3},{"word":"불확실성","type":"명사","level":"중급","category":"사고","length":5},{"word":"우선순위","type":"명사","level":"중급","category":"사고","length":4},{"word":"요구사항","type":"명사","level":"중급","category":"업무","length":4},{"word":"아키텍처","type":"명사","level":"중급","category":"기술","length":4},{"word":"정리하다","type":"동사","level":"초급","category":"일상","length":4},{"word":"분석하다","type":"동사","level":"중급","category":"사고","length":4},{"word":"구조화하다","type":"동사","level":"중급","category":"사고","length":5},{"word":"성찰하다","type":"동사","level":"고급","category":"철학","length":4},{"word":"구체적","type":"형용사","level":"중급","category":"사고","length":3},{"word":"본질적","type":"형용사","level":"고급","category":"철학","length":3}];
+  let wordBank=[],selectedWords=[],currentIndex=0,autoAdvanceTimer=null,secondsLeft=0;
+  const setupSection=document.getElementById('setup-section'),memorizeSection=document.getElementById('memorize-section'),answerSection=document.getElementById('answer-section'),resultSection=document.getElementById('result-section'),wordCountInput=document.getElementById('word-count'),lengthFilter=document.getElementById('length-filter'),typeFilter=document.getElementById('type-filter'),levelFilter=document.getElementById('level-filter'),categoryFilter=document.getElementById('category-filter'),timerSelect=document.getElementById('timer-select'),bankStatus=document.getElementById('bank-status'),filterStatus=document.getElementById('filter-status'),progressText=document.getElementById('progress-text'),wordDisplay=document.getElementById('word-display'),timerText=document.getElementById('timer-text'),answerGrid=document.getElementById('answer-grid');
+  document.getElementById('start-btn').addEventListener('click',startTraining);document.getElementById('preview-btn').addEventListener('click',updateFilterStatus);document.getElementById('next-btn').addEventListener('click',showNextWord);document.getElementById('check-btn').addEventListener('click',checkAnswers);[lengthFilter,typeFilter,levelFilter,categoryFilter].forEach(c=>c.addEventListener('change',updateFilterStatus));document.addEventListener('keyup',e=>{if(e.key==='Enter'&&!memorizeSection.classList.contains('hidden'))showNextWord();});init();
+  async function init(){try{const r=await fetch('word-bank.json',{cache:'no-store'});if(!r.ok)throw new Error('load failed');wordBank=normalizeWordData(await r.json());bankStatus.innerText=`단어 ${wordBank.length}개 로드됨`;}catch(e){wordBank=FALLBACK_WORDS;bankStatus.innerText=`기본 단어 ${wordBank.length}개 사용 중`;}populateCategoryFilter();updateFilterStatus();}
+  function normalizeWordData(data){if(Array.isArray(data))return data.map(i=>({...i,length:i.length||i.word.length}));if(!data||!Array.isArray(data.groups))return[];const seen=new Set(),result=[];data.groups.forEach(g=>(g.words||[]).forEach(word=>{if(seen.has(word))return;seen.add(word);result.push({word,type:g.type,level:g.level,category:g.category,length:word.length});}));return result;}
+  function populateCategoryFilter(){const cats=[...new Set(wordBank.map(i=>i.category))].sort();categoryFilter.innerHTML='<option value="all" selected>전체</option>'+cats.map(c=>`<option value="${c}">${c}</option>`).join('');}
+  function getFilteredWords(){return wordBank.filter(i=>{const l=i.length||i.word.length;const lenOk=lengthFilter.value==='all'||(lengthFilter.value==='3plus'&&l>=3)||(lengthFilter.value==='4plus'&&l>=4)||(lengthFilter.value==='4to6'&&l>=4&&l<=6)||(lengthFilter.value==='3to5'&&l>=3&&l<=5);return lenOk&&(typeFilter.value==='all'||i.type===typeFilter.value)&&(levelFilter.value==='all'||i.level===levelFilter.value)&&(categoryFilter.value==='all'||i.category===categoryFilter.value);});}
+  function updateFilterStatus(){const f=getFilteredWords(),ex=shuffle(f).slice(0,5).map(i=>i.word).join(', ');filterStatus.innerText=f.length?`현재 조건 ${f.length}개 · 예: ${ex}`:'현재 조건에 맞는 단어가 없습니다';}
+  function shuffle(a){const c=[...a];for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]];}return c;}
+  function clearAutoAdvanceTimer(){if(autoAdvanceTimer){clearInterval(autoAdvanceTimer);autoAdvanceTimer=null;}}
+  function startAutoAdvanceTimer(){clearAutoAdvanceTimer();const s=parseInt(timerSelect.value,10);if(!s){timerText.innerText='자동 진행 꺼짐 · Enter 또는 버튼으로 이동';return;}secondsLeft=s;timerText.innerText=`자동 다음까지 ${secondsLeft}초`;autoAdvanceTimer=setInterval(()=>{secondsLeft-=1;timerText.innerText=`자동 다음까지 ${secondsLeft}초`;if(secondsLeft<=0)showNextWord();},1000);}
+  function startTraining(){const filtered=getFilteredWords();if(!filtered.length){alert('현재 조건에 맞는 단어가 없습니다. 필터를 바꿔 주세요.');return;}const count=Math.min(Math.max(1,Math.min(50,parseInt(wordCountInput.value,10)||7)),filtered.length);selectedWords=shuffle(filtered).slice(0,count);currentIndex=0;setupSection.classList.add('hidden');resultSection.classList.add('hidden');answerSection.classList.add('hidden');memorizeSection.classList.remove('hidden');showCurrentWord();}
+  function showCurrentWord(){const cur=selectedWords[currentIndex];progressText.innerText=`${currentIndex+1} / ${selectedWords.length} · ${cur.type} · ${cur.level} · ${cur.category}`;wordDisplay.innerText=cur.word;document.getElementById('next-btn').innerText=currentIndex===selectedWords.length-1?'입력하러 가기':'다음 단어 보기';startAutoAdvanceTimer();}
+  function showNextWord(){clearAutoAdvanceTimer();currentIndex+=1;if(currentIndex>=selectedWords.length){showAnswerInputs();return;}showCurrentWord();}
+  function showAnswerInputs(){clearAutoAdvanceTimer();memorizeSection.classList.add('hidden');answerSection.classList.remove('hidden');answerGrid.innerHTML='';for(let i=0;i<selectedWords.length;i++){const input=document.createElement('input');input.type='text';input.placeholder=`${i+1}번째 기억 단어`;input.autocomplete='off';answerGrid.appendChild(input);}answerGrid.querySelector('input').focus();}
+  function normalize(v){return v.trim().replace(/\s+/g,'');}
+  function checkAnswers(){clearAutoAdvanceTimer();const correctSet=new Set(selectedWords.map(i=>normalize(i.word))),userAnswers=Array.from(answerGrid.querySelectorAll('input')).map(i=>normalize(i.value)).filter(Boolean),unique=[...new Set(userAnswers)],matched=unique.filter(a=>correctSet.has(a)),missed=selectedWords.map(i=>i.word).filter(w=>!matched.includes(w));resultSection.innerHTML=`<h2>${matched.length} / ${selectedWords.length}개 정답</h2><div class="summary-grid"><div class="summary-box"><strong>품사 구성</strong>${summarize(selectedWords,'type')}</div><div class="summary-box"><strong>난이도 구성</strong>${summarize(selectedWords,'level')}</div></div><p><span class="correct">맞춘 단어:</span></p><div class="pill-list">${matched.length?matched.map(w=>`<span class="pill hit">${w}</span>`).join(''):'<span class="pill">없음</span>'}</div><p><span class="wrong">놓친 단어:</span></p><div class="pill-list">${missed.length?missed.map(w=>`<span class="pill miss">${w}</span>`).join(''):'<span class="pill hit">없음</span>'}</div><p><span class="wrong">내가 쓴 것:</span></p><div class="pill-list">${unique.length?unique.map(w=>`<span class="pill">${w}</span>`).join(''):'<span class="pill">입력 없음</span>'}</div><div class="button-row"><button onclick="restart()">다시 하기</button></div>`;answerSection.classList.add('hidden');resultSection.classList.remove('hidden');}
+  function summarize(items,key){const c=items.reduce((a,i)=>(a[i[key]]=(a[i[key]]||0)+1,a),{});return Object.entries(c).map(([n,v])=>`${n} ${v}`).join(' · ');}
+  function restart(){clearAutoAdvanceTimer();selectedWords=[];currentIndex=0;resultSection.classList.add('hidden');setupSection.classList.remove('hidden');updateFilterStatus();wordCountInput.focus();}
 </script>
 </body>
 </html>
