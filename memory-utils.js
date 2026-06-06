@@ -18,17 +18,9 @@ window.MemoryTrainer = (() => {
   function reviewWords(program) { return [...new Set(dueReviews(program).map(r => r.word))]; }
 
   function weightedPool(items, program) {
-    const data = load();
-    const dueSet = new Set(reviewWords(program));
-    const result = [];
-    items.forEach(item => {
-      const word = wordOf(item);
-      const stat = data.wordStats[word] || {};
-      let weight = 1 + Math.min(6, stat.missed || 0) + Math.min(4, stat.weight || 0);
-      if (dueSet.has(word)) weight += 8;
-      for (let i = 0; i < weight; i++) result.push(item);
-    });
-    return result.length ? result : items;
+    // Keep this function name for compatibility with existing pages.
+    // Wrong answers are NOT weighted in normal training; review is handled only by the dedicated review button.
+    return items;
   }
 
   function recordSession(program, items, correctWords, extra = {}) {
@@ -41,18 +33,16 @@ window.MemoryTrainer = (() => {
     const missed = uniqueWords.filter(w => !correctSet.has(w));
 
     uniqueWords.forEach(word => {
-      const stat = data.wordStats[word] || { seen: 0, correct: 0, missed: 0, weight: 0, lastSeen: null };
+      const stat = data.wordStats[word] || { seen: 0, correct: 0, missed: 0, lastSeen: null };
       stat.seen += 1;
       stat.lastSeen = now;
       if (correctSet.has(word)) {
         stat.correct += 1;
-        stat.weight = Math.max(0, (stat.weight || 0) - 1);
         data.reviews.forEach(r => {
           if (r.word === word && r.program === program && !r.done && new Date(r.dueAt).getTime() <= nowMs) r.done = true;
         });
       } else {
         stat.missed += 1;
-        stat.weight = Math.min(12, (stat.weight || 0) + 3);
         [1, 3, 7].forEach(days => data.reviews.push({ word, program, dueAt: addDays(days), days, done: false, createdAt: now }));
       }
       data.wordStats[word] = stat;
