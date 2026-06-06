@@ -17,7 +17,7 @@
             justify-content: center;
             padding: 28px;
         }
-        .container { width: min(980px, 100%); }
+        .container { width: min(1100px, 100%); }
         header { text-align: center; margin-bottom: 28px; }
         h1 { margin: 0 0 10px; font-size: clamp(2rem, 5vw, 3.1rem); letter-spacing: -0.04em; }
         .subtitle { margin: 0; color: #64748b; font-size: 1.05rem; line-height: 1.7; }
@@ -51,6 +51,7 @@
         .program-card:nth-child(2) .badge { color: #047857; background: #d1fae5; }
         .program-card:nth-child(3) .badge { color: #b45309; background: #fef3c7; }
         .program-card:nth-child(4) .badge { color: #7c3aed; background: #ede9fe; }
+        .program-card:nth-child(5) .badge { color: #c2410c; background: #ffedd5; }
         h2 { margin: 0 0 12px; font-size: 1.45rem; }
         .description { margin: 0; color: #64748b; line-height: 1.65; }
         .start { margin-top: 22px; font-weight: 800; color: #111827; }
@@ -61,7 +62,7 @@
     <main class="container">
         <header>
             <h1>Jake의 기억력 훈련실</h1>
-            <p class="subtitle">작업 기억, 단어 기억, 낯선 글자 기억, 고사성어 기억을 따로 훈련할 수 있는 작은 연습실입니다.<br>원하는 프로그램을 선택해서 시작하세요.</p>
+            <p class="subtitle">작업 기억, 단어 기억, 지연 회상, 낯선 글자 기억, 고사성어 기억을 따로 훈련할 수 있는 작은 연습실입니다.<br>원하는 프로그램을 선택해서 시작하세요.</p>
         </header>
 
         <section class="program-grid" aria-label="기억력 훈련 프로그램 목록">
@@ -97,6 +98,15 @@
                     <span class="badge">고사성어 + 이야기</span>
                     <h2>고사성어기억훈련</h2>
                     <p class="description">4글자 성어뿐 아니라 계륵·낙백·걸해골·면목 같은 고사어까지 기억하고 뜻과 이야기를 함께 복습합니다.</p>
+                </div>
+                <div class="start">시작하기 →</div>
+            </a>
+
+            <a class="program-card" href="delayed-memory.html">
+                <div>
+                    <span class="badge">지연 회상 + 뺄셈</span>
+                    <h2>단기기억지연훈련</h2>
+                    <p class="description">단어 3개부터 외운 뒤 30초 동안 뺄셈 중심 계산을 하고, 방해 후에도 단어를 기억하는지 확인합니다.</p>
                 </div>
                 <div class="start">시작하기 →</div>
             </a>
