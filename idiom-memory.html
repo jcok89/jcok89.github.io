@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사자성어기억훈련</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Malgun Gothic', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f3ff;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            width: min(680px, 100%);
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
+            text-align: center;
+        }
+        .home-link {
+            display: inline-block;
+            margin-bottom: 14px;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .home-link:hover { color: #7c3aed; }
+        h1 { margin: 0 0 10px; font-size: 2rem; }
+        .description { margin: 0 0 22px; color: #64748b; line-height: 1.65; }
+        .setup-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        input[type="number"], input[type="text"] {
+            padding: 12px 14px;
+            border: 2px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+        }
+        input[type="number"] { width: 110px; text-align: center; }
+        input:focus { border-color: #8b5cf6; }
+        button {
+            border: 0;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            font-weight: 800;
+            background: #8b5cf6;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover { background: #7c3aed; }
+        .word-display {
+            margin: 24px auto;
+            padding: 34px 20px;
+            border-radius: 18px;
+            background: #ede9fe;
+            color: #5b21b6;
+            font-size: clamp(2.2rem, 9vw, 4.4rem);
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .progress { color: #64748b; font-weight: 700; min-height: 24px; }
+        .timer { color: #7c3aed; font-weight: 800; min-height: 24px; margin-top: -10px; margin-bottom: 14px; }
+        .answer-grid {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .answer-grid input { width: 100%; }
+        .result {
+            margin-top: 18px;
+            text-align: left;
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 16px;
+            line-height: 1.7;
+        }
+        .result h2 { margin: 0 0 10px; text-align: center; }
+        .hidden { display: none; }
+        .correct { color: #047857; font-weight: 800; }
+        .wrong { color: #b91c1c; font-weight: 800; }
+        .pill-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .pill { background: #e2e8f0; border-radius: 999px; padding: 6px 10px; }
+        .explain-list { display: grid; gap: 12px; margin-top: 12px; }
+        .explain-card {
+            border: 1px solid #ddd6fe;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 14px;
+        }
+        .explain-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        .idiom-title { font-size: 1.2rem; font-weight: 900; color: #5b21b6; }
+        .match-badge {
+            border-radius: 999px;
+            padding: 4px 9px;
+            font-size: 0.82rem;
+            font-weight: 900;
+        }
+        .match-badge.hit { background: #dcfce7; color: #047857; }
+        .match-badge.miss { background: #fee2e2; color: #b91c1c; }
+        .meaning-box {
+            border-left: 4px solid #8b5cf6;
+            background: #f5f3ff;
+            padding: 10px 12px;
+            border-radius: 10px;
+            margin-top: 8px;
+        }
+        .story-box {
+            border-left: 4px solid #f59e0b;
+            background: #fffbeb;
+            padding: 10px 12px;
+            border-radius: 10px;
+            margin-top: 8px;
+        }
+        .label { font-weight: 900; color: #374151; }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <a href="index.html" class="home-link">← 훈련실로 돌아가기</a>
+        <h1>사자성어기억훈련</h1>
+        <p class="description">사자성어를 하나씩 보고 기억해 보세요. 마지막에 입력한 답은 순서와 상관없이 채점하고, 정답의 뜻과 유래 또는 얽힌 이야기를 함께 보여줍니다.</p>
+
+        <section id="setup-section">
+            <div class="setup-row">
+                <label for="word-count">사자성어 수</label>
+                <input type="number" id="word-count" min="1" max="20" value="5" autocomplete="off">
+                <button id="start-btn">시작</button>
+            </div>
+            <p class="progress">추천: 처음에는 5개부터 시작하세요.</p>
+        </section>
+
+        <section id="memorize-section" class="hidden">
+            <div class="progress" id="progress-text"></div>
+            <div class="word-display" id="word-display"></div>
+            <div class="timer" id="timer-text"></div>
+            <button id="next-btn">다음 사자성어 보기</button>
+        </section>
+
+        <section id="answer-section" class="hidden">
+            <p class="progress">기억나는 사자성어를 입력하세요. 순서는 상관없습니다.</p>
+            <div id="answer-grid" class="answer-grid"></div>
+            <button id="check-btn">채점하기</button>
+        </section>
+
+        <section id="result-section" class="result hidden"></section>
+    </main>
+
+<script>
+    const IDIOM_BANK = [
+        { word: '일석이조', meaning: '돌 하나로 새 두 마리를 잡는다는 뜻으로, 한 가지 일로 두 가지 이익을 얻는다는 말입니다.', story: '사냥에서 하나의 돌팔매로 두 마리 새를 잡는 장면에서 온 표현으로, 효율적인 선택을 말할 때 자주 씁니다.' },
+        { word: '사면초가', meaning: '사방에서 초나라 노래가 들린다는 뜻으로, 완전히 고립되어 도움받을 곳이 없는 상황을 말합니다.', story: '항우가 해하에서 포위되었을 때 사방에서 초나라 노래가 들려 병사들의 마음이 무너졌다는 이야기에서 유래했습니다.' },
+        { word: '고진감래', meaning: '쓴 것이 다하면 단 것이 온다는 뜻으로, 고생 끝에 즐거움이 온다는 말입니다.', story: '힘든 시간을 견디면 결국 좋은 결과가 온다는 교훈적 표현으로 공부나 훈련의 격려에 자주 사용됩니다.' },
+        { word: '동문서답', meaning: '동쪽을 묻는데 서쪽을 답한다는 뜻으로, 질문과 전혀 맞지 않는 대답을 말합니다.', story: '상대의 질문 의도를 제대로 파악하지 못하고 엉뚱하게 답하는 상황을 풍자하는 표현입니다.' },
+        { word: '작심삼일', meaning: '굳게 먹은 마음이 사흘을 넘기지 못한다는 뜻으로, 결심이 오래가지 못함을 말합니다.', story: '새로운 습관이나 공부 계획을 세웠지만 금방 흐지부지되는 일을 경계하는 말로 많이 쓰입니다.' },
+        { word: '자업자득', meaning: '자기가 저지른 일의 결과를 자기가 받는다는 뜻입니다.', story: '좋은 일이든 나쁜 일이든 자신의 행동이 결과로 돌아온다는 책임의 의미가 강합니다.' },
+        { word: '유비무환', meaning: '미리 준비해 두면 근심이 없다는 뜻입니다.', story: '위험이 닥친 뒤에 허둥대지 않으려면 평소 대비가 중요하다는 교훈을 담고 있습니다.' },
+        { word: '대기만성', meaning: '큰 그릇은 늦게 완성된다는 뜻으로, 큰 인물은 늦게 이루어진다는 말입니다.', story: '눈앞의 성과가 늦더라도 꾸준히 쌓은 힘이 나중에 크게 드러난다는 의미로 쓰입니다.' },
+        { word: '과유불급', meaning: '지나친 것은 미치지 못한 것과 같다는 뜻입니다.', story: '공자의 말에서 온 표현으로, 무엇이든 적절한 균형과 절제가 중요하다는 뜻입니다.' },
+        { word: '청출어람', meaning: '푸른색은 쪽에서 나왔지만 쪽보다 더 푸르다는 뜻으로, 제자가 스승보다 나아짐을 말합니다.', story: '배움이 이어지며 다음 세대가 이전 세대를 뛰어넘을 수 있다는 긍정적 의미가 있습니다.' },
+        { word: '금상첨화', meaning: '비단 위에 꽃을 더한다는 뜻으로, 좋은 것에 더 좋은 것이 보태짐을 말합니다.', story: '이미 훌륭한 상태에 장점이 하나 더해질 때 쓰는 표현입니다.' },
+        { word: '전화위복', meaning: '재앙이 바뀌어 복이 된다는 뜻으로, 나쁜 일이 오히려 좋은 결과로 이어짐을 말합니다.', story: '위기를 어떻게 받아들이고 활용하느냐에 따라 결과가 달라질 수 있다는 의미가 있습니다.' },
+        { word: '우공이산', meaning: '우공이 산을 옮긴다는 뜻으로, 꾸준히 노력하면 큰일도 이룰 수 있다는 말입니다.', story: '노인이 산을 옮기겠다고 날마다 흙을 나르자 하늘이 감동했다는 중국 고사에서 유래했습니다.' },
+        { word: '새옹지마', meaning: '변방 노인의 말이라는 뜻으로, 인생의 길흉화복은 쉽게 단정할 수 없다는 말입니다.', story: '말을 잃은 일이 복이 되고, 얻은 일이 다시 화가 되는 이야기에서 유래했습니다.' },
+        { word: '각골난망', meaning: '뼈에 새겨 잊기 어렵다는 뜻으로, 큰 은혜를 깊이 기억함을 말합니다.', story: '도움을 받은 일을 마음속 깊이 새겨 오래 잊지 않겠다는 감사의 표현입니다.' },
+        { word: '결자해지', meaning: '묶은 사람이 풀어야 한다는 뜻으로, 일을 만든 사람이 해결해야 한다는 말입니다.', story: '문제를 일으킨 당사자가 책임지고 매듭을 풀어야 한다는 의미로 쓰입니다.' },
+        { word: '군계일학', meaning: '닭 무리 속의 한 마리 학이라는 뜻으로, 평범한 사람들 가운데 뛰어난 사람을 말합니다.', story: '여럿 가운데 유난히 두드러지는 재능이나 품격을 표현할 때 씁니다.' },
+        { word: '권선징악', meaning: '착한 일을 권하고 악한 일을 벌한다는 뜻입니다.', story: '전통 이야기와 고전 문학에서 선한 사람은 보상받고 악한 사람은 벌받는 구조를 설명할 때 쓰입니다.' },
+        { word: '난공불락', meaning: '공격하기 어렵고 함락되지 않는다는 뜻입니다.', story: '성이나 요새가 매우 견고한 데서 나온 말로, 빈틈없이 강한 대상이나 체계를 비유합니다.' },
+        { word: '다다익선', meaning: '많으면 많을수록 좋다는 뜻입니다.', story: '한신이 군사는 많을수록 잘 지휘할 수 있다고 한 이야기와 연결되어 전해집니다.' },
+        { word: '마이동풍', meaning: '말의 귀에 동풍이 분다는 뜻으로, 남의 말을 귀담아듣지 않음을 말합니다.', story: '좋은 충고가 아무 효과 없이 흘러가 버리는 상황을 비유합니다.' },
+        { word: '명불허전', meaning: '명성은 헛되이 전해지지 않는다는 뜻으로, 이름난 만큼 실력이 있음을 말합니다.', story: '소문으로만 들었던 뛰어난 실력을 실제로 확인했을 때 자주 씁니다.' },
+        { word: '문전성시', meaning: '문 앞이 시장처럼 붐빈다는 뜻으로, 찾아오는 사람이 매우 많음을 말합니다.', story: '인기가 많거나 권세가 있는 집 앞에 사람들이 몰려드는 모습에서 온 표현입니다.' },
+        { word: '박학다식', meaning: '배운 것이 넓고 아는 것이 많다는 뜻입니다.', story: '여러 분야에 지식이 풍부한 사람을 칭찬할 때 쓰는 표현입니다.' },
+        { word: '백전백승', meaning: '백 번 싸워 백 번 이긴다는 뜻으로, 싸울 때마다 모두 이김을 말합니다.', story: '전략과 준비가 완벽한 승리의 이미지를 줄 때 쓰지만, 실제로는 과장된 표현이기도 합니다.' },
+        { word: '부전자전', meaning: '아버지와 아들이 서로 전한다는 뜻으로, 아들이 아버지를 닮음을 말합니다.', story: '성격, 습관, 재능 등이 부모에게서 자식에게 이어지는 모습을 표현합니다.' },
+        { word: '불철주야', meaning: '밤낮을 가리지 않는다는 뜻으로, 쉬지 않고 힘씀을 말합니다.', story: '중요한 일을 위해 밤낮없이 노력하는 상황에 쓰입니다.' },
+        { word: '상부상조', meaning: '서로 돕는다는 뜻입니다.', story: '혼자 해결하기 어려운 일을 서로 도와 함께 이겨내는 공동체의 태도를 말합니다.' },
+        { word: '선견지명', meaning: '앞일을 미리 내다보는 밝은 지혜라는 뜻입니다.', story: '일이 벌어지기 전에 흐름을 예측하고 대비하는 능력을 칭찬할 때 씁니다.' },
+        { word: '설상가상', meaning: '눈 위에 서리가 더한다는 뜻으로, 어려운 일에 더 어려운 일이 겹침을 말합니다.', story: '이미 힘든 상황에 또 다른 문제가 생길 때 쓰는 표현입니다.' },
+        { word: '십시일반', meaning: '열 사람이 한 숟가락씩 보태면 한 사람 먹을 분량이 된다는 뜻입니다.', story: '작은 도움도 여럿이 모으면 큰 힘이 된다는 나눔의 의미를 담고 있습니다.' },
+        { word: '안하무인', meaning: '눈 아래 사람이 없다는 뜻으로, 남을 업신여기고 교만함을 말합니다.', story: '자기만 잘났다고 여기며 다른 사람을 존중하지 않는 태도를 비판하는 말입니다.' },
+        { word: '역지사지', meaning: '처지를 바꾸어 생각한다는 뜻입니다.', story: '상대 입장에서 생각해 보면 갈등을 줄이고 이해를 넓힐 수 있다는 교훈입니다.' },
+        { word: '오리무중', meaning: '오 리나 되는 안개 속이라는 뜻으로, 일이 어떻게 된 것인지 알 수 없는 상태를 말합니다.', story: '앞이 보이지 않는 짙은 안개처럼 상황 파악이 어려울 때 씁니다.' },
+        { word: '용두사미', meaning: '머리는 용 같고 꼬리는 뱀 같다는 뜻으로, 시작은 거창하지만 끝이 보잘것없음을 말합니다.', story: '처음의 기세를 끝까지 유지하지 못하는 일을 경계하는 표현입니다.' },
+        { word: '이심전심', meaning: '마음에서 마음으로 전한다는 뜻으로, 말하지 않아도 서로 뜻이 통함을 말합니다.', story: '말보다 마음과 분위기로 통하는 깊은 이해를 표현할 때 사용됩니다.' },
+        { word: '일취월장', meaning: '날마다 달마다 성장한다는 뜻으로, 실력이 빠르게 발전함을 말합니다.', story: '꾸준한 연습으로 눈에 띄게 나아지는 모습을 칭찬하는 말입니다.' },
+        { word: '전전긍긍', meaning: '매우 두려워하고 조심한다는 뜻입니다.', story: '실수할까 봐 마음을 졸이며 불안해하는 상태를 나타냅니다.' },
+        { word: '조삼모사', meaning: '아침에 세 개, 저녁에 네 개라는 뜻으로, 눈앞의 차이에 속아 본질을 보지 못함을 말합니다.', story: '원숭이들에게 도토리 개수를 다르게 말하자 반응이 달라졌다는 이야기에서 유래했습니다.' },
+        { word: '화룡점정', meaning: '용 그림에 눈동자를 찍는다는 뜻으로, 마지막 중요한 손질로 일이 완성됨을 말합니다.', story: '용 그림에 눈을 그려 넣자 용이 하늘로 날아갔다는 고사에서 온 표현입니다.' }
+    ];
+
+    const AUTO_ADVANCE_SECONDS = 10;
+    let selectedIdioms = [];
+    let currentIndex = 0;
+    let autoAdvanceTimer = null;
+    let secondsLeft = AUTO_ADVANCE_SECONDS;
+
+    const setupSection = document.getElementById('setup-section');
+    const memorizeSection = document.getElementById('memorize-section');
+    const answerSection = document.getElementById('answer-section');
+    const resultSection = document.getElementById('result-section');
+    const wordCountInput = document.getElementById('word-count');
+    const progressText = document.getElementById('progress-text');
+    const wordDisplay = document.getElementById('word-display');
+    const timerText = document.getElementById('timer-text');
+    const answerGrid = document.getElementById('answer-grid');
+
+    document.getElementById('start-btn').addEventListener('click', startTraining);
+    document.getElementById('next-btn').addEventListener('click', showNextIdiom);
+    document.getElementById('check-btn').addEventListener('click', checkAnswers);
+
+    document.addEventListener('keyup', function(event) {
+        if (event.key !== 'Enter') return;
+        if (!memorizeSection.classList.contains('hidden')) showNextIdiom();
+    });
+
+    function shuffle(array) {
+        return [...array].sort(() => Math.random() - 0.5);
+    }
+
+    function clearAutoAdvanceTimer() {
+        if (autoAdvanceTimer) {
+            clearInterval(autoAdvanceTimer);
+            autoAdvanceTimer = null;
+        }
+    }
+
+    function updateTimerText() {
+        timerText.innerText = `자동 다음까지 ${secondsLeft}초`;
+    }
+
+    function startAutoAdvanceTimer() {
+        clearAutoAdvanceTimer();
+        secondsLeft = AUTO_ADVANCE_SECONDS;
+        updateTimerText();
+        autoAdvanceTimer = setInterval(function() {
+            secondsLeft -= 1;
+            updateTimerText();
+            if (secondsLeft <= 0) {
+                showNextIdiom();
+            }
+        }, 1000);
+    }
+
+    function startTraining() {
+        const count = Math.max(1, Math.min(20, parseInt(wordCountInput.value, 10) || 5));
+        selectedIdioms = shuffle(IDIOM_BANK).slice(0, count);
+        currentIndex = 0;
+        setupSection.classList.add('hidden');
+        resultSection.classList.add('hidden');
+        answerSection.classList.add('hidden');
+        memorizeSection.classList.remove('hidden');
+        showCurrentIdiom();
+    }
+
+    function showCurrentIdiom() {
+        progressText.innerText = `${currentIndex + 1} / ${selectedIdioms.length}`;
+        wordDisplay.innerText = selectedIdioms[currentIndex].word;
+        document.getElementById('next-btn').innerText = currentIndex === selectedIdioms.length - 1 ? '입력하러 가기' : '다음 사자성어 보기';
+        startAutoAdvanceTimer();
+    }
+
+    function showNextIdiom() {
+        clearAutoAdvanceTimer();
+        currentIndex += 1;
+        if (currentIndex >= selectedIdioms.length) {
+            showAnswerInputs();
+            return;
+        }
+        showCurrentIdiom();
+    }
+
+    function showAnswerInputs() {
+        clearAutoAdvanceTimer();
+        memorizeSection.classList.add('hidden');
+        answerSection.classList.remove('hidden');
+        answerGrid.innerHTML = '';
+        for (let i = 0; i < selectedIdioms.length; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = `${i + 1}번째 기억 사자성어`;
+            input.autocomplete = 'off';
+            answerGrid.appendChild(input);
+        }
+        answerGrid.querySelector('input').focus();
+    }
+
+    function normalize(value) {
+        return value.trim().replace(/\s+/g, '');
+    }
+
+    function checkAnswers() {
+        clearAutoAdvanceTimer();
+        const correctSet = new Set(selectedIdioms.map(item => normalize(item.word)));
+        const userAnswers = Array.from(answerGrid.querySelectorAll('input')).map(input => normalize(input.value)).filter(Boolean);
+        const uniqueUserAnswers = [...new Set(userAnswers)];
+        const matched = uniqueUserAnswers.filter(answer => correctSet.has(answer));
+        const userAnswerSet = new Set(uniqueUserAnswers);
+
+        const explainCards = selectedIdioms.map(item => {
+            const isHit = userAnswerSet.has(normalize(item.word));
+            return `
+                <article class="explain-card">
+                    <div class="explain-head">
+                        <span class="idiom-title">${item.word}</span>
+                        <span class="match-badge ${isHit ? 'hit' : 'miss'}">${isHit ? '맞힘' : '놓침'}</span>
+                    </div>
+                    <div class="meaning-box"><span class="label">뜻:</span> ${item.meaning}</div>
+                    <div class="story-box"><span class="label">유래/이야기:</span> ${item.story}</div>
+                </article>
+            `;
+        }).join('');
+
+        resultSection.innerHTML = `
+            <h2>${matched.length} / ${selectedIdioms.length}개 정답</h2>
+            <p><span class="correct">맞춘 사자성어:</span></p>
+            <div class="pill-list">${matched.length ? matched.map(word => `<span class="pill">${word}</span>`).join('') : '<span class="pill">없음</span>'}</div>
+            <p><span class="wrong">내가 쓴 것:</span></p>
+            <div class="pill-list">${uniqueUserAnswers.length ? uniqueUserAnswers.map(word => `<span class="pill">${word}</span>`).join('') : '<span class="pill">입력 없음</span>'}</div>
+            <p><span class="correct">정답과 뜻/이야기:</span></p>
+            <div class="explain-list">${explainCards}</div>
+            <p style="text-align:center; margin-top:18px;"><button onclick="restart()">다시 하기</button></p>
+        `;
+        answerSection.classList.add('hidden');
+        resultSection.classList.remove('hidden');
+    }
+
+    function restart() {
+        clearAutoAdvanceTimer();
+        selectedIdioms = [];
+        currentIndex = 0;
+        resultSection.classList.add('hidden');
+        setupSection.classList.remove('hidden');
+        wordCountInput.focus();
+    }
+</script>
+</body>
+</html>
