@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>수학의 공습</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:'Segoe UI','Malgun Gothic',Tahoma,sans-serif;background:linear-gradient(135deg,#eff6ff,#f8fafc 55%,#fff7ed);color:#1f2937;display:flex;align-items:center;justify-content:center;padding:20px}.card{width:min(860px,100%);background:rgba(255,255,255,.96);border-radius:24px;padding:28px;box-shadow:0 18px 45px rgba(15,23,42,.14);border:1px solid rgba(148,163,184,.25);text-align:center}.home-link{display:inline-block;margin-bottom:14px;color:#64748b;text-decoration:none;font-weight:800}.home-link:hover{color:#2563eb}h1{margin:0 0 10px;font-size:clamp(2rem,5vw,3.1rem);letter-spacing:-.04em}.description{margin:0 auto 20px;color:#64748b;line-height:1.7;max-width:720px}.panel{background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:18px;margin-top:18px}.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;text-align:left}label{display:block;font-weight:900;color:#334155;margin-bottom:6px;font-size:.92rem}input,select{width:100%;padding:12px 13px;border:2px solid #d1d5db;border-radius:12px;font-size:1rem;outline:none;background:white}input:focus,select:focus{border-color:#2563eb}button{border:0;border-radius:12px;padding:13px 18px;font-size:1rem;font-weight:900;background:#2563eb;color:white;cursor:pointer}button:hover{background:#1d4ed8}.secondary{background:#334155}.secondary:hover{background:#1f2937}.button-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}.score-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0}.score-card{background:white;border:1px solid #e2e8f0;border-radius:14px;padding:12px}.score-card strong{display:block;font-size:1.5rem;color:#0f172a}.stage{display:inline-flex;align-items:center;padding:7px 12px;border-radius:999px;background:#dbeafe;color:#1d4ed8;font-weight:900;margin-bottom:10px}.timer{font-size:1.25rem;font-weight:950;color:#dc2626;min-height:30px}.question{margin:20px auto;padding:34px 18px;border-radius:24px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:clamp(3rem,12vw,6.5rem);font-weight:950;letter-spacing:.02em;min-height:190px;display:flex;align-items:center;justify-content:center}.answer-row{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}.answer-row input{max-width:220px;text-align:center;font-size:1.4rem;font-weight:900}.feedback{min-height:28px;margin:12px 0 0;font-weight:900}.ok{color:#047857}.bad{color:#b91c1c}.result{margin-top:18px;background:#f8fafc;border-radius:18px;padding:18px;border:1px solid #e2e8f0;line-height:1.7;text-align:left}.result h2{text-align:center;margin:0 0 12px}.hidden{display:none}.small-note{color:#64748b;font-size:.92rem;line-height:1.6}.chart-wrap{background:white;border:1px solid #e2e8f0;border-radius:14px;padding:12px;margin-top:14px}canvas{width:100%;height:150px}.pill-list{display:flex;flex-wrap:wrap;gap:8px}.pill{background:#e2e8f0;border-radius:999px;padding:6px 10px;font-weight:800}.miss{background:#fee2e2;color:#b91c1c}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <a href="index.html" class="home-link">← 훈련실로 돌아가기</a>
+    <h1>수학의 공습</h1>
+    <p class="description">제한 시간 동안 덧셈·뺄셈 문제를 빠르게 풉니다. 기본 설정은 뺄셈을 약 75%로 더 많이 나오게 했습니다.</p>
+
+    <section id="setup-section" class="panel">
+      <div class="controls">
+        <div><label for="duration-select">훈련 시간</label><select id="duration-select"><option value="30">30초</option><option value="60" selected>60초</option><option value="90">90초</option><option value="120">120초</option></select></div>
+        <div><label for="mode-select">출제 방식</label><select id="mode-select"><option value="sub-focus" selected>뺄셈 중심 75%</option><option value="sub-only">뺄셈만</option><option value="mixed">덧셈/뺄셈 반반</option><option value="add-only">덧셈만</option></select></div>
+        <div><label for="level-select">난이도</label><select id="level-select"><option value="easy">쉬움</option><option value="normal" selected>보통</option><option value="hard">어려움</option></select></div>
+        <div><label for="feedback-select">피드백</label><select id="feedback-select"><option value="instant" selected>즉시 표시</option><option value="quiet">조용히 진행</option></select></div>
+      </div>
+      <div class="score-board"><div class="score-card"><strong id="best-score">-</strong>최고 점수</div><div class="score-card"><strong id="last-score">-</strong>최근 점수</div><div class="score-card"><strong id="train-count">0</strong>훈련 횟수</div></div>
+      <div class="chart-wrap"><canvas id="history-chart" width="760" height="150"></canvas></div>
+      <div class="button-row"><button id="start-btn">공습 시작</button><button class="secondary" id="reset-history-btn" type="button">기록 초기화</button></div>
+      <p class="small-note">추천 시작: 60초, 뺄셈 중심, 보통. 정답률이 80% 이상이면 어려움으로 올려 보세요.</p>
+    </section>
+
+    <section id="game-section" class="hidden">
+      <span class="stage">계산 중</span>
+      <div class="timer" id="timer-text">남은 시간 60초</div>
+      <div class="question" id="question-text">?</div>
+      <div class="answer-row"><input type="number" id="answer-input" placeholder="답" autocomplete="off"><button id="submit-btn">제출</button></div>
+      <p class="feedback" id="feedback-text"></p>
+      <div class="score-board"><div class="score-card"><strong id="total-count">0</strong>시도</div><div class="score-card"><strong id="correct-count">0</strong>정답</div><div class="score-card"><strong id="sub-count">0</strong>뺄셈</div><div class="score-card"><strong id="accuracy-text">0%</strong>정답률</div></div>
+    </section>
+
+    <section id="result-section" class="result hidden"></section>
+  </main>
+
+<script>
+  const STORAGE_KEY='jakeMathAttack:v1';
+  let timer=null,remaining=60,current=null,total=0,correct=0,subCount=0,subCorrect=0,addCount=0,addCorrect=0,wrongItems=[],startedAt=0;
+  const setup=document.getElementById('setup-section'),game=document.getElementById('game-section'),result=document.getElementById('result-section'),durationSelect=document.getElementById('duration-select'),modeSelect=document.getElementById('mode-select'),levelSelect=document.getElementById('level-select'),feedbackSelect=document.getElementById('feedback-select'),timerText=document.getElementById('timer-text'),questionText=document.getElementById('question-text'),answerInput=document.getElementById('answer-input'),feedbackText=document.getElementById('feedback-text');
+  document.getElementById('start-btn').addEventListener('click',startGame);document.getElementById('submit-btn').addEventListener('click',submitAnswer);answerInput.addEventListener('keyup',e=>{if(e.key==='Enter')submitAnswer();});document.getElementById('reset-history-btn').addEventListener('click',()=>{if(confirm('기록을 지울까요?')){localStorage.removeItem(STORAGE_KEY);renderHistory();}});renderHistory();
+  function loadHistory(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}catch(e){return[];}}
+  function saveSession(session){const rows=loadHistory();rows.push(session);localStorage.setItem(STORAGE_KEY,JSON.stringify(rows.slice(-100)));}
+  function renderHistory(){const rows=loadHistory(),last=rows[rows.length-1],best=rows.reduce((m,r)=>Math.max(m,r.correct),0);document.getElementById('best-score').innerText=rows.length?best:'-';document.getElementById('last-score').innerText=last?last.correct:'-';document.getElementById('train-count').innerText=rows.length;drawChart(rows.slice(-12));}
+  function drawChart(rows){const c=document.getElementById('history-chart'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#f8fafc';ctx.fillRect(0,0,c.width,c.height);ctx.strokeStyle='#cbd5e1';ctx.beginPath();ctx.moveTo(34,10);ctx.lineTo(34,c.height-26);ctx.lineTo(c.width-10,c.height-26);ctx.stroke();ctx.fillStyle='#64748b';ctx.font='12px Malgun Gothic, sans-serif';ctx.fillText('최근 정답 수',10,16);if(!rows.length){ctx.fillText('아직 기록이 없습니다.',48,64);return;}const max=Math.max(1,...rows.map(r=>r.correct)),barW=Math.max(12,(c.width-60)/rows.length-6);rows.forEach((r,i)=>{const x=42+i*(barW+6),h=Math.max(2,(c.height-46)*(r.correct/max)),y=c.height-26-h;ctx.fillStyle='#2563eb';ctx.fillRect(x,y,barW,h);ctx.fillStyle='#334155';ctx.fillText(String(r.correct),x,y-4);});}
+  function startGame(){remaining=parseInt(durationSelect.value,10);total=0;correct=0;subCount=0;subCorrect=0;addCount=0;addCorrect=0;wrongItems=[];startedAt=Date.now();setup.classList.add('hidden');result.classList.add('hidden');game.classList.remove('hidden');timerText.innerText=`남은 시간 ${remaining}초`;updateStats();makeProblem();answerInput.focus();timer=setInterval(()=>{remaining-=1;timerText.innerText=`남은 시간 ${remaining}초`;if(remaining<=0)finishGame();},1000);}
+  function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+  function chooseOp(){const mode=modeSelect.value;if(mode==='sub-only')return '-';if(mode==='add-only')return '+';if(mode==='mixed')return Math.random()<0.5?'-':'+';return Math.random()<0.75?'-':'+';}
+  function makeProblem(){const op=chooseOp(),level=levelSelect.value;let a,b,answer,borrow=false;if(op==='-'){if(level==='easy'){a=rand(20,79);b=rand(2,Math.min(19,a));}else if(level==='normal'){a=rand(30,99);b=rand(11,Math.min(59,a));}else{a=rand(100,299);b=rand(21,Math.min(149,a));}answer=a-b;borrow=(a%10)<(b%10);}else{if(level==='easy'){a=rand(3,39);b=rand(2,29);}else if(level==='normal'){a=rand(12,79);b=rand(11,69);}else{a=rand(50,199);b=rand(30,149);}answer=a+b;}current={a,b,op,answer,borrow};questionText.innerText=`${a} ${op} ${b}`;answerInput.value='';}
+  function submitAnswer(){if(!current||game.classList.contains('hidden'))return;const v=parseInt(answerInput.value,10);if(Number.isNaN(v))return;total+=1;const isCorrect=v===current.answer;if(current.op==='-')subCount+=1;else addCount+=1;if(isCorrect){correct+=1;if(current.op==='-')subCorrect+=1;else addCorrect+=1;feedbackText.className='feedback ok';feedbackText.innerText=feedbackSelect.value==='instant'?'정답입니다.':'';}else{wrongItems.push({...current,user:v});feedbackText.className='feedback bad';feedbackText.innerText=feedbackSelect.value==='instant'?`오답입니다. 정답은 ${current.answer}`:'';}updateStats();makeProblem();answerInput.focus();}
+  function updateStats(){document.getElementById('total-count').innerText=total;document.getElementById('correct-count').innerText=correct;document.getElementById('sub-count').innerText=subCount;document.getElementById('accuracy-text').innerText=total?`${Math.round(correct/total*100)}%`:'0%';}
+  function finishGame(){clearInterval(timer);timer=null;game.classList.add('hidden');const duration=parseInt(durationSelect.value,10),accuracy=total?Math.round(correct/total*100):0,subAccuracy=subCount?Math.round(subCorrect/subCount*100):0,addAccuracy=addCount?Math.round(addCorrect/addCount*100):0;saveSession({date:new Date().toISOString(),duration,mode:modeSelect.value,level:levelSelect.value,total,correct,accuracy,subCount,subCorrect,subAccuracy,addCount,addCorrect,addAccuracy});renderHistory();result.innerHTML=`<h2>결과: ${correct}개 정답</h2><div class="score-board"><div class="score-card"><strong>${total}</strong>시도</div><div class="score-card"><strong>${accuracy}%</strong>전체 정답률</div><div class="score-card"><strong>${subAccuracy}%</strong>뺄셈 정답률</div><div class="score-card"><strong>${addAccuracy}%</strong>덧셈 정답률</div></div><p class="small-note">틀린 문제는 아래에서 확인하세요. 뺄셈이 약하면 정답률 70~85% 정도가 되는 난이도로 유지하는 것이 좋습니다.</p><div class="pill-list">${wrongItems.length?wrongItems.slice(0,20).map(w=>`<span class="pill miss">${w.a} ${w.op} ${w.b} = ${w.answer} / 입력 ${w.user}</span>`).join(''):'<span class="pill">틀린 문제가 없습니다.</span>'}</div><div class="button-row"><button onclick="restart()">다시 하기</button></div>`;result.classList.remove('hidden');}
+  function restart(){result.classList.add('hidden');setup.classList.remove('hidden');renderHistory();}
+</script>
+</body>
+</html>
