@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Jake Ok의 글 읽기">
+    <meta name="author" content="Jake Ok">
+    <meta name="copyright" content="Copyright © Jake Ok. All rights reserved.">
+    <title>글 읽기 | Jake Ok의 글들</title>
+    <link rel="stylesheet" href="portal.css">
+    <link rel="stylesheet" href="writing.css">
+</head>
+<body>
+    <main class="reader-shell">
+        <nav class="reader-nav" aria-label="글 탐색">
+            <a class="back-link" href="writings.html">← 글 목록으로</a>
+            <a class="home-link" href="index.html">Jake's Toolbox</a>
+        </nav>
+
+        <article id="article" class="article protected-content" aria-live="polite">
+            <p class="loading">글을 불러오는 중입니다…</p>
+        </article>
+
+        <div class="article-footer">
+            <a href="writings.html">← 다른 글 둘러보기</a>
+            <p class="copyright-notice">© 2026 Jake Ok. All rights reserved.<br>이 글의 무단 복제·배포·전재를 금합니다.</p>
+        </div>
+    </main>
+    <script src="writing-content.js"></script>
+    <script src="writing.js"></script>
+</body>
+</html>
