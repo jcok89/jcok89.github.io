@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BBC 선정 위대한 그림 220의 작품명과 작가를 익히는 간격 반복 카드">
+    <title>BBC 선정 위대한 그림 220 | Jake의 Anki</title>
+    <link rel="stylesheet" href="portal.css">
+    <link rel="stylesheet" href="anki.css">
+</head>
+<body>
+    <main class="page-shell study-shell">
+        <nav class="study-nav" aria-label="페이지 이동">
+            <a class="back-link" href="anki.html">← Jake의 Anki로 돌아가기</a>
+            <button class="text-button" id="reset-progress" type="button">학습 기록 초기화</button>
+        </nav>
+
+        <header class="study-header">
+            <div>
+                <span class="eyebrow">BBC GREAT PAINTINGS · 220</span>
+                <h1>작품과 작가</h1>
+                <p>먼저 답을 떠올린 뒤 카드를 뒤집고, 기억한 정도를 솔직하게 선택하세요.</p>
+            </div>
+            <div class="mode-control">
+                <label for="study-mode">학습 방향</label>
+                <select id="study-mode">
+                    <option value="work-to-artist">작품 → 작가</option>
+                    <option value="artist-to-work">작가 → 작품</option>
+                    <option value="mixed">양방향 섞기</option>
+                </select>
+            </div>
+        </header>
+
+        <section class="study-status" aria-label="학습 현황">
+            <div class="status-item"><span>오늘 남은 카드</span><strong id="remaining-count">0</strong></div>
+            <div class="status-item"><span>학습한 카드</span><strong id="studied-count">0</strong></div>
+            <div class="status-item"><span>전체 카드</span><strong id="total-count">220</strong></div>
+            <div class="progress-track" aria-hidden="true"><span id="progress-fill"></span></div>
+        </section>
+
+        <section class="review-area" aria-live="polite">
+            <article class="flashcard" id="flashcard">
+                <div class="card-face card-front" id="card-front"></div>
+                <div class="card-face card-back" id="card-back" hidden></div>
+            </article>
+
+            <div class="review-controls">
+                <button class="show-answer" id="show-answer" type="button">답 보기 <kbd>Space</kbd></button>
+                <div class="rating-buttons" id="rating-buttons" hidden>
+                    <button class="rating rating-again" data-rating="again" type="button"><span>다시</span><small>1분</small><kbd>1</kbd></button>
+                    <button class="rating rating-hard" data-rating="hard" type="button"><span>어려움</span><small>6시간</small><kbd>2</kbd></button>
+                    <button class="rating rating-good" data-rating="good" type="button"><span>좋음</span><small>1일+</small><kbd>3</kbd></button>
+                    <button class="rating rating-easy" data-rating="easy" type="button"><span>쉬움</span><small>4일+</small><kbd>4</kbd></button>
+                </div>
+            </div>
+
+            <p class="keyboard-hint">키보드: <kbd>Space</kbd> 답 보기 · <kbd>1</kbd>–<kbd>4</kbd> 기억 상태 선택</p>
+        </section>
+
+        <section class="complete-panel" id="complete-panel" hidden>
+            <span class="complete-icon" aria-hidden="true">✓</span>
+            <h2>오늘의 복습을 마쳤습니다</h2>
+            <p id="complete-message">기억 상태에 맞춰 다음 복습 시점을 저장했습니다.</p>
+            <button class="secondary-button" id="review-all" type="button">전체 카드 다시 보기</button>
+        </section>
+
+        <aside class="storage-note">학습 기록은 현재 브라우저에만 저장됩니다. 다른 기기나 브라우저와 자동으로 동기화되지는 않습니다.</aside>
+    </main>
+
+    <script src="anki-artworks-data.js"></script>
+    <script src="anki-artworks.js"></script>
+</body>
+</html>
