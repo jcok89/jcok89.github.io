@@ -1,0 +1,363 @@
+(function () {
+    'use strict';
+
+    const STORAGE_KEY = 'jake-anki-books-v1';
+    const MODE_KEY = 'jake-anki-books-mode';
+    const CATEGORY_KEY = 'jake-anki-books-category';
+    const DAY = 24 * 60 * 60 * 1000;
+    const CATEGORY_ORDER = ['문학', '신화·고전', 'SF', '철학·인문', '역사·사회', '과학', '자기계발·기타'];
+    const ratings = {
+        again: { delay: 60 * 1000, multiplier: 0, easeDelta: -0.2 },
+        hard: { delay: 6 * 60 * 60 * 1000, multiplier: 1.2, easeDelta: -0.15 },
+        good: { delay: DAY, multiplier: 2.5, easeDelta: 0 },
+        easy: { delay: 4 * DAY, multiplier: 4, easeDelta: 0.15 }
+    };
+
+    const elements = {
+        mode: document.getElementById('study-mode'),
+        category: document.getElementById('category-filter'),
+        remaining: document.getElementById('remaining-count'),
+        studied: document.getElementById('studied-count'),
+        total: document.getElementById('total-count'),
+        progress: document.getElementById('progress-fill'),
+        reviewArea: document.querySelector('.review-area'),
+        front: document.getElementById('card-front'),
+        back: document.getElementById('card-back'),
+        show: document.getElementById('show-answer'),
+        ratingButtons: document.getElementById('rating-buttons'),
+        complete: document.getElementById('complete-panel'),
+        completeMessage: document.getElementById('complete-message'),
+        reviewAll: document.getElementById('review-all'),
+        reset: document.getElementById('reset-progress')
+    };
+
+    let progress = loadProgress();
+    let deck = [];
+    let queue = [];
+    let currentCard = null;
+    let sessionTotal = 0;
+    let includeFuture = false;
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    function loadProgress() {
+        try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        } catch (error) {
+            return {};
+        }
+    }
+
+    function saveProgress() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    }
+
+    function hash(value) {
+        let result = 2166136261;
+        for (let index = 0; index < value.length; index += 1) {
+            result ^= value.charCodeAt(index);
+            result = Math.imul(result, 16777619);
+        }
+        return (result >>> 0).toString(36);
+    }
+
+    function makeTitleAuthorCards(items) {
+        const titles = new Map();
+        items.forEach((item) => {
+            if (!titles.has(item.title)) {
+                titles.set(item.title, { title: item.title, entries: [], numbers: [] });
+            }
+            titles.get(item.title).entries.push({ author: item.author, category: item.category });
+            titles.get(item.title).numbers.push(item.no);
+        });
+        return Array.from(titles.values()).map((item) => ({
+            id: 'title-author-' + hash(item.title),
+            type: 'title-to-author',
+            ...item
+        }));
+    }
+
+    function makeAuthorCards(items, categoryKey) {
+        const authors = new Map();
+        items.forEach((item) => {
+            if (!authors.has(item.author)) {
+                authors.set(item.author, { author: item.author, books: [], numbers: [] });
+            }
+            authors.get(item.author).books.push({ title: item.title, category: item.category });
+            authors.get(item.author).numbers.push(item.no);
+        });
+        return Array.from(authors.values()).map((item) => ({
+            id: 'author-title-' + hash(item.author) + '-' + hash(categoryKey),
+            type: 'author-to-title',
+            ...item
+        }));
+    }
+
+    function makeTitleCategoryCards(items) {
+        const titles = new Map();
+        items.forEach((item) => {
+            if (!titles.has(item.title)) {
+                titles.set(item.title, { title: item.title, authors: [], categories: [], numbers: [] });
+            }
+            const entry = titles.get(item.title);
+            if (!entry.authors.includes(item.author)) entry.authors.push(item.author);
+            if (!entry.categories.includes(item.category)) entry.categories.push(item.category);
+            entry.numbers.push(item.no);
+        });
+        return Array.from(titles.values()).map((item) => ({
+            id: 'title-category-' + hash(item.title),
+            type: 'title-to-category',
+            ...item
+        }));
+    }
+
+    function buildDeck(mode, items, categoryKey) {
+        const titleAuthorCards = makeTitleAuthorCards(items);
+        if (mode === 'title-to-author') return titleAuthorCards;
+
+        const authorCards = makeAuthorCards(items, categoryKey);
+        if (mode === 'author-to-title') return authorCards;
+
+        const titleCategoryCards = makeTitleCategoryCards(items);
+        if (mode === 'title-to-category') return titleCategoryCards;
+
+        return interleaveMany([titleAuthorCards, authorCards, titleCategoryCards]);
+    }
+
+    function interleaveMany(groups) {
+        const result = [];
+        const length = Math.max(...groups.map((group) => group.length));
+        for (let index = 0; index < length; index += 1) {
+            groups.forEach((group) => {
+                if (group[index]) result.push(group[index]);
+            });
+        }
+        return result;
+    }
+
+    function selectedBooks() {
+        if (elements.category.value === 'all') return ANKI_BOOKS;
+        return ANKI_BOOKS.filter((item) => item.category === elements.category.value);
+    }
+
+    function startSession() {
+        const books = selectedBooks();
+        deck = buildDeck(elements.mode.value, books, elements.category.value);
+        const now = Date.now();
+        queue = deck.filter((card) => includeFuture || !progress[card.id] || progress[card.id].due <= now);
+        sessionTotal = queue.length;
+        currentCard = null;
+        elements.total.textContent = deck.length.toLocaleString('ko-KR');
+        showNextCard();
+    }
+
+    function showNextCard() {
+        currentCard = queue.shift() || null;
+        updateStatus();
+        if (!currentCard) {
+            showComplete();
+            return;
+        }
+
+        elements.complete.hidden = true;
+        elements.reviewArea.hidden = false;
+        elements.front.hidden = false;
+        elements.back.hidden = true;
+        elements.show.hidden = false;
+        elements.ratingButtons.hidden = true;
+        renderCard(currentCard);
+        elements.show.focus({ preventScroll: true });
+    }
+
+    function renderCard(card) {
+        if (card.type === 'title-to-author') {
+            renderTitleAuthorCard(card);
+            return;
+        }
+        if (card.type === 'author-to-title') {
+            renderAuthorTitleCard(card);
+            return;
+        }
+        renderTitleCategoryCard(card);
+    }
+
+    function renderTitleAuthorCard(card) {
+        elements.front.innerHTML =
+            '<span class="card-label">제목 → 저자</span>' +
+            '<h2 class="card-question">《' + escapeHtml(card.title) + '》</h2>' +
+            '<p class="card-prompt">이 책의 저자는?</p>' +
+            '<span class="source-number">목록 #' + card.numbers.join(', #') + '</span>';
+
+        if (card.entries.length === 1) {
+            const entry = card.entries[0];
+            elements.back.innerHTML =
+                '<span class="card-label">정답</span>' +
+                '<p class="answer-primary">' + escapeHtml(entry.author) + '</p>' +
+                '<span class="answer-rule"></span>' +
+                '<span class="category-chip">' + escapeHtml(entry.category) + '</span>' +
+                '<span class="source-number">《' + escapeHtml(card.title) + '》 · #' + card.numbers[0] + '</span>';
+            return;
+        }
+
+        const entries = card.entries.map((entry) =>
+            '<li>' + escapeHtml(entry.author) +
+            '<span class="list-category">' + escapeHtml(entry.category) + '</span></li>'
+        ).join('');
+        elements.back.innerHTML =
+            '<span class="card-label">정답 · ' + card.entries.length + '개 판본</span>' +
+            '<ul class="answer-list">' + entries + '</ul>' +
+            '<span class="source-number">목록 #' + card.numbers.join(', #') + '</span>';
+    }
+
+    function renderAuthorTitleCard(card) {
+        const books = card.books.map((book) =>
+            '<li>《' + escapeHtml(book.title) + '》' +
+            '<span class="list-category">' + escapeHtml(book.category) + '</span></li>'
+        ).join('');
+        elements.front.innerHTML =
+            '<span class="card-label">저자 → 책</span>' +
+            '<h2 class="card-question">' + escapeHtml(card.author) + '</h2>' +
+            '<p class="card-prompt">이 목록에 포함된 책은?</p>';
+        elements.back.innerHTML =
+            '<span class="card-label">정답 · ' + card.books.length + '권</span>' +
+            '<ul class="answer-list">' + books + '</ul>' +
+            '<span class="source-number">목록 #' + card.numbers.join(', #') + '</span>';
+    }
+
+    function renderTitleCategoryCard(card) {
+        elements.front.innerHTML =
+            '<span class="card-label">제목 → 분야</span>' +
+            '<h2 class="card-question">《' + escapeHtml(card.title) + '》</h2>' +
+            '<p class="card-prompt">이 책이 속한 분야는?</p>' +
+            '<span class="source-number">목록 #' + card.numbers.join(', #') + '</span>';
+        elements.back.innerHTML =
+            '<span class="card-label">정답</span>' +
+            '<p class="answer-primary">' + card.categories.map(escapeHtml).join(' · ') + '</p>' +
+            '<span class="answer-rule"></span>' +
+            '<p class="answer-secondary">' + card.authors.map(escapeHtml).join(' / ') + '</p>' +
+            '<span class="source-number">《' + escapeHtml(card.title) + '》</span>';
+    }
+
+    function revealAnswer() {
+        if (!currentCard || elements.show.hidden) return;
+        elements.front.hidden = true;
+        elements.back.hidden = false;
+        elements.show.hidden = true;
+        elements.ratingButtons.hidden = false;
+        elements.ratingButtons.querySelector('[data-rating="good"]').focus({ preventScroll: true });
+    }
+
+    function rateCard(ratingName) {
+        if (!currentCard || elements.ratingButtons.hidden) return;
+        const rule = ratings[ratingName];
+        const previous = progress[currentCard.id] || { interval: 0, ease: 2.5, reviews: 0, lapses: 0 };
+        let interval;
+
+        if (ratingName === 'again') {
+            interval = rule.delay;
+        } else if (previous.interval > 0) {
+            interval = Math.max(rule.delay, Math.round(previous.interval * rule.multiplier * previous.ease));
+        } else {
+            interval = rule.delay;
+        }
+
+        progress[currentCard.id] = {
+            due: Date.now() + interval,
+            interval,
+            ease: Math.max(1.3, previous.ease + rule.easeDelta),
+            reviews: previous.reviews + 1,
+            lapses: previous.lapses + (ratingName === 'again' ? 1 : 0)
+        };
+        saveProgress();
+        showNextCard();
+    }
+
+    function updateStatus() {
+        const reviewed = deck.filter((card) => progress[card.id]?.reviews > 0).length;
+        const remaining = currentCard ? queue.length + 1 : queue.length;
+        const completedThisSession = Math.max(0, sessionTotal - remaining);
+        elements.remaining.textContent = remaining.toLocaleString('ko-KR');
+        elements.studied.textContent = reviewed.toLocaleString('ko-KR');
+        elements.progress.style.width = sessionTotal ? ((completedThisSession / sessionTotal) * 100) + '%' : '100%';
+    }
+
+    function showComplete() {
+        elements.reviewArea.hidden = true;
+        elements.complete.hidden = false;
+        const reviewed = deck.filter((card) => progress[card.id]?.reviews > 0).length;
+        elements.completeMessage.textContent = reviewed
+            ? reviewed.toLocaleString('ko-KR') + '장의 학습 기록을 보관 중입니다. 기억 상태에 맞춰 다시 보여드릴게요.'
+            : '현재 조건에서 복습할 카드가 없습니다. 선택한 카드를 다시 볼 수도 있습니다.';
+    }
+
+    function populateCategories() {
+        const counts = ANKI_BOOKS.reduce((result, item) => {
+            result[item.category] = (result[item.category] || 0) + 1;
+            return result;
+        }, {});
+        CATEGORY_ORDER.forEach((category) => {
+            if (!counts[category]) return;
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category + ' (' + counts[category] + ')';
+            elements.category.append(option);
+        });
+    }
+
+    elements.show.addEventListener('click', revealAnswer);
+    elements.ratingButtons.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-rating]');
+        if (button) rateCard(button.dataset.rating);
+    });
+    elements.mode.addEventListener('change', () => {
+        localStorage.setItem(MODE_KEY, elements.mode.value);
+        includeFuture = false;
+        startSession();
+    });
+    elements.category.addEventListener('change', () => {
+        localStorage.setItem(CATEGORY_KEY, elements.category.value);
+        includeFuture = false;
+        startSession();
+    });
+    elements.reviewAll.addEventListener('click', () => {
+        includeFuture = true;
+        startSession();
+    });
+    elements.reset.addEventListener('click', () => {
+        if (!window.confirm('이 덱의 학습 기록과 복습 일정을 모두 지울까요?')) return;
+        progress = {};
+        saveProgress();
+        includeFuture = false;
+        startSession();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.target.matches('select, button') && event.key === ' ') return;
+        if (event.key === ' ') {
+            event.preventDefault();
+            revealAnswer();
+        }
+        if (!elements.ratingButtons.hidden && ['1', '2', '3', '4'].includes(event.key)) {
+            const names = ['again', 'hard', 'good', 'easy'];
+            rateCard(names[Number(event.key) - 1]);
+        }
+    });
+
+    populateCategories();
+
+    const savedMode = localStorage.getItem(MODE_KEY);
+    if (savedMode && Array.from(elements.mode.options).some((option) => option.value === savedMode)) {
+        elements.mode.value = savedMode;
+    }
+    const savedCategory = localStorage.getItem(CATEGORY_KEY);
+    if (savedCategory && Array.from(elements.category.options).some((option) => option.value === savedCategory)) {
+        elements.category.value = savedCategory;
+    }
+    startSession();
+}());
