@@ -74,6 +74,14 @@ body {
 .study-controls { display: flex; flex: 0 0 auto; gap: 10px; }
 .study-controls .mode-control { flex-basis: 170px; }
 
+.study-header > div:first-child { min-width: 0; }
+.study-controls { flex-wrap: wrap; justify-content: flex-end; max-width: 360px; }
+.session-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; margin-bottom: 18px; padding: 16px; border: 1px solid var(--anki-line); border-radius: 15px; background: rgba(255,253,248,0.74); }
+.session-toolbar .mode-control { flex: 0 1 170px; }
+.session-toolbar p { flex: 1 1 200px; margin: 0; color: var(--anki-muted); font-size: 0.84rem; line-height: 1.65; }
+.session-toolbar .secondary-button { font-size: 0.85rem; }
+.session-toolbar select { min-height: 44px; }
+
 .study-status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
 .status-item { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 13px 15px; border: 1px solid var(--anki-line); border-radius: 13px; background: rgba(255,253,248,0.74); }
 .status-item span { color: var(--anki-muted); font-size: 0.8rem; font-weight: 700; }
@@ -133,6 +141,7 @@ kbd { display: inline-flex; min-width: 22px; min-height: 20px; align-items: cent
     .deck-card h3 { margin-top: 28px; }
     .study-header { align-items: stretch; flex-direction: column; }
     .study-controls { width: 100%; }
+    .study-controls { max-width: none; }
     .study-controls .mode-control { flex: 1 1 0; }
     .mode-control { flex-basis: auto; }
     .study-status { grid-template-columns: 1fr; gap: 7px; }
@@ -144,6 +153,8 @@ kbd { display: inline-flex; min-width: 22px; min-height: 20px; align-items: cent
     .study-nav { align-items: flex-start; flex-direction: column; gap: 10px; }
     .study-header { margin-top: 28px; }
     .study-controls { flex-direction: column; }
+    .session-toolbar { align-items: stretch; flex-direction: column; }
+    .session-toolbar .mode-control, .session-toolbar p { flex-basis: auto; }
     .rating-buttons { grid-template-columns: repeat(2, 1fr); }
     .rating { min-height: 62px; }
     .review-controls { min-height: 141px; }

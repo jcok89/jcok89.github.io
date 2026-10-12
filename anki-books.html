@@ -40,6 +40,18 @@
             </div>
         </header>
 
+        <section class="session-toolbar" aria-label="복습 순서와 이어하기">
+            <div class="mode-control">
+                <label for="review-order">카드 순서</label>
+                <select id="review-order" aria-describedby="session-message">
+                    <option value="sequential">목록 순서대로</option>
+                    <option value="random">랜덤 순서</option>
+                </select>
+            </div>
+            <p id="session-message" role="status">멈춘 카드와 남은 순서는 자동 저장됩니다.</p>
+            <button class="secondary-button" id="restart-session" type="button">처음부터 다시 보기</button>
+        </section>
+
         <section class="study-status" aria-label="학습 현황">
             <div class="status-item"><span>오늘 남은 카드</span><strong id="remaining-count">0</strong></div>
             <div class="status-item"><span>학습한 카드</span><strong id="studied-count">0</strong></div>
@@ -77,6 +89,7 @@
     </main>
 
     <script src="anki-books-data.js"></script>
+    <script src="anki-session.js"></script>
     <script src="anki-books.js"></script>
 </body>
 </html>
