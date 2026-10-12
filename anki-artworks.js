@@ -3,6 +3,8 @@
 
     const STORAGE_KEY = 'jake-anki-artworks-v1';
     const MODE_KEY = 'jake-anki-artworks-mode';
+    const ORDER_KEY = 'jake-anki-artworks-order';
+    const sessions = AnkiSession.create('artworks');
     const DAY = 24 * 60 * 60 * 1000;
     const ratings = {
         again: { delay: 60 * 1000, multiplier: 0, easeDelta: -0.2 },
@@ -13,6 +15,9 @@
 
     const elements = {
         mode: document.getElementById('study-mode'),
+        order: document.getElementById('review-order'),
+        sessionMessage: document.getElementById('session-message'),
+        restart: document.getElementById('restart-session'),
         remaining: document.getElementById('remaining-count'),
         studied: document.getElementById('studied-count'),
         total: document.getElementById('total-count'),
@@ -45,15 +50,11 @@
     }
 
     function loadProgress() {
-        try {
-            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-        } catch (error) {
-            return {};
-        }
+        return AnkiSession.readProgress(STORAGE_KEY);
     }
 
     function saveProgress() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        if (!AnkiSession.write(STORAGE_KEY, JSON.stringify(progress))) showStorageWarning();
     }
 
     function makeWorkCards() {
@@ -106,11 +107,37 @@
         return result;
     }
 
-    function startSession() {
+    function sessionScope() {
+        return [elements.mode.value];
+    }
+
+    function showStorageWarning() {
+        elements.sessionMessage.textContent = '저장 공간에 접근할 수 없어 이번 복습은 저장되지 않습니다.';
+    }
+
+    function saveSession() {
+        const remaining = currentCard ? [currentCard, ...queue] : queue;
+        if (!sessions.save(sessionScope(), deck, remaining, sessionTotal, includeFuture, elements.order.value)) {
+            showStorageWarning();
+        }
+    }
+
+    function startSession(restart = false) {
         deck = buildDeck(elements.mode.value);
-        const now = Date.now();
-        queue = deck.filter((card) => includeFuture || !progress[card.id] || progress[card.id].due <= now);
-        sessionTotal = queue.length;
+        const saved = restart ? null : sessions.load(sessionScope(), deck);
+        if (saved) {
+            queue = saved.remaining;
+            sessionTotal = saved.total;
+            includeFuture = saved.includeFuture;
+            elements.order.value = saved.order;
+            elements.sessionMessage.textContent = '멈춘 지점부터 이어서 복습합니다. 남은 순서도 그대로 유지됩니다.';
+        } else {
+            const now = Date.now();
+            queue = deck.filter((card) => includeFuture || !progress[card.id] || progress[card.id].due <= now);
+            if (elements.order.value === 'random') queue = AnkiSession.shuffle(queue);
+            sessionTotal = queue.length;
+            elements.sessionMessage.textContent = '멈춘 카드와 남은 순서는 자동 저장됩니다. 다시 열면 이어서 시작합니다.';
+        }
         currentCard = null;
         elements.total.textContent = deck.length.toLocaleString('ko-KR');
         showNextCard();
@@ -118,6 +145,7 @@
 
     function showNextCard() {
         currentCard = queue.shift() || null;
+        saveSession();
         updateStatus();
         if (!currentCard) {
             showComplete();
@@ -174,6 +202,7 @@
     function rateCard(ratingName) {
         if (!currentCard || elements.ratingButtons.hidden) return;
         const rule = ratings[ratingName];
+        if (!rule) return;
         const previous = progress[currentCard.id] || { interval: 0, ease: 2.5, reviews: 0, lapses: 0 };
         let interval;
 
@@ -220,20 +249,36 @@
         if (button) rateCard(button.dataset.rating);
     });
     elements.mode.addEventListener('change', () => {
-        localStorage.setItem(MODE_KEY, elements.mode.value);
+        AnkiSession.write(MODE_KEY, elements.mode.value);
         includeFuture = false;
         startSession();
     });
     elements.reviewAll.addEventListener('click', () => {
         includeFuture = true;
-        startSession();
+        startSession(true);
     });
     elements.reset.addEventListener('click', () => {
         if (!window.confirm('이 덱의 학습 기록과 복습 일정을 모두 지울까요?')) return;
         progress = {};
+        sessions.clear();
         saveProgress();
         includeFuture = false;
         startSession();
+    });
+    elements.order.addEventListener('change', () => {
+        AnkiSession.write(ORDER_KEY, elements.order.value);
+        const remaining = currentCard ? [currentCard, ...queue] : queue;
+        queue = elements.order.value === 'random'
+            ? AnkiSession.shuffle(remaining)
+            : deck.filter((card) => remaining.includes(card));
+        currentCard = null;
+        elements.sessionMessage.textContent = '남은 카드만 선택한 순서로 복습합니다. 이미 복습한 카드는 반복하지 않습니다.';
+        showNextCard();
+    });
+    elements.restart.addEventListener('click', () => {
+        if (!window.confirm('현재 복습 위치를 바꾸고 선택한 전체 카드를 처음부터 다시 볼까요? 학습 기록과 일정은 유지됩니다.')) return;
+        includeFuture = true;
+        startSession(true);
     });
     document.addEventListener('keydown', (event) => {
         if (event.target.matches('select, button') && event.key === ' ') return;
@@ -247,7 +292,9 @@
         }
     });
 
-    const savedMode = localStorage.getItem(MODE_KEY);
+    const savedOrder = AnkiSession.read(ORDER_KEY);
+    if (['sequential', 'random'].includes(savedOrder)) elements.order.value = savedOrder;
+    const savedMode = AnkiSession.read(MODE_KEY);
     if (savedMode && Array.from(elements.mode.options).some((option) => option.value === savedMode)) {
         elements.mode.value = savedMode;
     }
