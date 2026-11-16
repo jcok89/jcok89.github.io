@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="작품·사건·개념에서 사람 이름과 고유명사를 떠올리고, 막힐 때도 대화를 이어가는 Jake의 인출 훈련">
+<title>고유명사 인출 훈련 | Jake의 기억력 훈련실</title>
+<style>
+:root{color-scheme:light;--ink:#172033;--muted:#64748b;--line:#dce4ee;--accent:#485bd5;--light:#eef1ff}
+*{box-sizing:border-box}body{margin:0;padding:20px 14px 55px;min-height:100vh;background:radial-gradient(circle at 10% 10%,#dceafe,transparent 33rem),radial-gradient(circle at 95% 90%,#f4e8ff,transparent 35rem),#f8fafc;color:var(--ink);font-family:system-ui,-apple-system,"Malgun Gothic",sans-serif}
+main{max-width:850px;margin:auto}.back{color:#526071;font-weight:800;text-decoration:none;display:inline-block;margin:12px 0 24px}header{text-align:center;margin-bottom:26px}header .eyebrow{font-size:.75rem;letter-spacing:.2em;color:var(--accent);font-weight:900}h1{margin:9px 0;font-size:clamp(2.1rem,6vw,3.4rem);letter-spacing:-.04em}header p{color:var(--muted);line-height:1.75;margin:0}
+section.panel{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 12px 35px #22305112;padding:clamp(18px,4vw,30px);margin-top:16px}
+h2{font-size:1.35rem;margin:0 0 16px}h3{margin:0 0 10px}p{line-height:1.65}.subtle{color:var(--muted);font-size:.94rem}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.field label{display:block;font-size:.9rem;font-weight:850;margin:0 0 7px}select,input,textarea{font:inherit;max-width:100%;width:100%;border:2px solid var(--line);padding:12px;border-radius:12px;background:white;color:var(--ink)}select:focus,input:focus,textarea:focus{outline:2px solid #b3c3fb;border-color:var(--accent)}textarea{min-height:80px;resize:vertical}
+button{border:0;border-radius:12px;background:var(--accent);color:#fff;font:inherit;font-weight:850;padding:12px 19px;cursor:pointer;min-height:46px}
+button.secondary{background:#e9edf8;color:#25395e}button.ghost{background:white;color:var(--accent);border:1px solid #bac5e8}button:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.actions button{flex:1 1 160px}
+.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.stat{border-radius:14px;background:#f4f6fb;padding:14px 10px;text-align:center}.stat strong{font-size:1.4rem;display:block;color:#2d419d}.stat span{font-size:.8rem;color:#546174}
+.note{background:#f5f7ff;border-radius:14px;padding:13px 15px;color:#415179;line-height:1.6;font-size:.9rem}
+.hidden{display:none!important}.tag{display:inline-flex;border-radius:99px;background:#edf0ff;color:#3e4f9e;font-size:.82rem;font-weight:850;padding:6px 11px;margin-right:5px}
+.prompt{background:linear-gradient(130deg,#f0f4ff,#fafaff);border:1px solid #dce2ff;border-radius:18px;padding:24px;margin:16px 0;line-height:1.6;font-size:clamp(1.2rem,3.8vw,1.65rem);font-weight:850;word-break:keep-all}
+.hint{background:#f7f7ff;border-left:4px solid #9da9ec;padding:14px;border-radius:10px;margin:12px 0;line-height:1.65}
+.feedback{border-radius:12px;padding:12px 14px;background:#eaf9f2;color:#09653e;font-weight:750;margin-top:12px}.feedback.try{background:#fff5e9;color:#935315}
+.reveal{margin:18px 0;padding:20px;border-radius:18px;background:#f7fafc;border:1px solid var(--line)}
+.answer{font-size:clamp(1.5rem,5vw,2.1rem);font-weight:900;color:#293ea1;line-height:1.35;margin:7px 0}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:14px}.choices button{background:#edf0fc;color:#27376f;text-align:left}.choices button:hover{background:#dfe6ff}
+details{margin-top:12px}.history{display:flex;flex-wrap:wrap;gap:7px}.chip{background:#eef2f7;padding:7px 10px;border-radius:999px;color:#53627d;font-size:.83rem}
+.progress{height:8px;background:#edf0f7;border-radius:10px;overflow:hidden;margin:14px 0}.progress div{height:100%;background:var(--accent);transition:width .2s}
+:focus-visible{outline:3px solid #7b91ff;outline-offset:3px}
+@media(max-width:520px){.statrow{gap:5px}.stat{padding:10px 4px}.stat strong{font-size:1.2rem}.choices{grid-template-columns:1fr}.actions button{flex-basis:130px}}
+</style>
+</head>
+<body>
+<main>
+<a class="back" href="memory.html">← 기억력 훈련실로</a>
+<header><span class="eyebrow">RETRIEVAL LAB</span><h1>고유명사 인출 훈련</h1><p>알고 있는데도 이름이 안 떠오를 때.<br>작품·특징·사건에서 이름을 꺼내고, 막혀도 대화를 이어가는 연습입니다.</p></header>
+<section id="setup" class="panel">
+<h2>오늘의 인출 연습</h2>
+<div class="grid">
+<div class="field"><label for="category">분야</label><select id="category"><option value="all">전체 섞기</option><option value="문학">작가·문학</option><option value="철학">철학자</option><option value="과학">과학자</option><option value="개념">문학·교양 개념</option></select></div>
+<div class="field"><label for="mode">질문 방식</label><select id="mode"><option value="clue">지식 단서 → 이름</option><option value="talk">대화 중 이름 꺼내기</option><option value="mixed">두 방식 섞기</option></select></div>
+<div class="field"><label for="count">문제 수</label><select id="count"><option>5</option><option selected>10</option><option>15</option><option>20</option></select></div>
+</div>
+<div class="statrow"><div class="stat"><strong id="seenStat">0</strong><span>학습한 이름</span></div><div class="stat"><strong id="dueStat">0</strong><span>복습할 이름</span></div><div class="stat"><strong id="sessionStat">0</strong><span>완료한 회차</span></div></div>
+<div class="actions"><button id="start">무작위 훈련 시작</button><button id="review" class="secondary">복습할 이름만</button></div>
+<p id="reviewMsg" class="subtle"></p>
+<p class="note">정확히 기억하는 것만 목표가 아닙니다. <b>막히면 잠깐 기다렸다가 힌트로 넘어가세요.</b> 시간 제한이나 연속 정답 압박은 없습니다. 기록은 이 브라우저에만 저장됩니다.</p>
+</section>
+<section id="game" class="panel hidden" aria-live="polite">
+<div><span id="counter" class="tag">1 / 10</span><span id="topic" class="tag">문학</span><span id="way" class="tag">자유 인출</span></div>
+<div class="progress"><div id="bar" style="width:0%"></div></div>
+<div id="prompt" class="prompt"></div>
+<div id="clueBox" class="hint hidden"></div>
+<div class="field"><label for="guess">떠오르는 이름을 입력해 보세요</label><input id="guess" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="이름 또는 용어 (모르면 비워두세요)"></div>
+<div id="feedback" class="feedback hidden" role="status"></div>
+<div id="choices" class="choices hidden" aria-label="보기 중 선택"></div>
+<div id="responseActions" class="actions">
+<button id="submit">이름 확인</button><button id="hint" class="secondary">막힘 · 단서 받기</button>
+<button id="recognize" class="ghost">보기에서 알아보기</button>
+</div>
+<details id="bridge"><summary><b>대화 실전</b> — 이름이 막혀도 말을 계속하기</summary><p class="subtle">고유명사를 빼고 “그 사람 있잖아, …”로 시작해 특징을 한 문장으로 설명해 보세요. 말한 뒤 다시 이름을 떠올려 보세요. 직접 적어도 좋습니다.</p><textarea id="bridgeText" placeholder="예: 러시아 작가인데 『죄와 벌』 쓴 사람 있잖아…"></textarea><p class="subtle">여기 적은 문장은 저장하거나 채점하지 않습니다.</p></details>
+<div id="result" class="reveal hidden">
+<div id="resultLabel" class="tag"></div>
+<div id="resultName" class="answer"></div>
+<p id="resultDetail"></p>
+<p id="resultBridge" class="note"></p>
+<div class="actions"><button id="next">다음 문제</button><button id="stop" class="secondary">여기서 마치기</button></div>
+</div>
+</section>
+<section id="finish" class="panel hidden">
+<h2>오늘 훈련을 마쳤어요</h2><p class="subtle">점수보다 어떤 도움에서 이름이 떠올랐는지 살펴보세요.</p>
+<div class="statrow"><div class="stat"><strong id="freeEnd">0</strong><span>힌트 없이</span></div><div class="stat"><strong id="helpEnd">0</strong><span>힌트 받아 인출</span></div><div class="stat"><strong id="seeEnd">0</strong><span>보기·정답 확인</span></div></div>
+<p id="endText" class="note"></p><div id="summary" class="history"></div>
+<div class="actions"><button id="restart">다시 연습</button><a class="back" href="memory.html">훈련실로 돌아가기</a></div>
+</section>
+</main>
+<script>
+"use strict";
+const BANK=[
+["dost","도스토옙스키","문학","『죄와 벌』을 쓴 러시아 작가","『카라마조프가의 형제들』도 썼어요.","도스…","러시아 작가인데 『죄와 벌』을 쓴 사람 있잖아.","표도르 도스토옙스키|도스또예프스끼|도스토예프스키"],
+["schop","쇼펜하우어","철학","헤겔과 강의 시간을 경쟁적으로 잡았던 비관주의 철학자","『의지와 표상으로서의 세계』의 저자예요.","쇼펜…","헤겔과 대립하고 논쟁술에 관한 글을 쓴 독일 철학자 있잖아.","아르투어 쇼펜하우어|쇼펜하워"],
+["kafka","프란츠 카프카","문학","『변신』과 『소송』을 쓴 작가","어느 날 거대한 벌레로 변한 주인공 이야기가 유명해요.","카프…","주인공이 벌레로 변하는 소설 쓴 사람 있잖아.","카프카"],
+["dickens","찰스 디킨스","문학","『두 도시 이야기』와 『올리버 트위스트』를 쓴 작가","빅토리아 시대 영국 소설가예요.","디킨…","『크리스마스 캐럴』도 쓴 영국 소설가 있잖아.","디킨스"],
+["camus","알베르 카뮈","문학","『이방인』과 『페스트』를 쓴 프랑스어권 작가","부조리의 철학과 관련해 자주 언급돼요.","카뮈…","소설 『이방인』에서 뫼르소를 등장시킨 작가 있잖아.","카뮈"],
+["tolstoy","레프 톨스토이","문학","『전쟁과 평화』와 『안나 카레니나』를 쓴 러시아 작가","대표적인 러시아 사실주의 대작가예요.","톨스…","안나 카레니나 이야기 쓴 그 러시아 소설가 있잖아.","톨스토이|리오 톨스토이"],
+["balzac","오노레 드 발자크","문학","『인간 희극』 연작을 쓴 프랑스 작가","『고리오 영감』의 저자예요.","발자…","『인간 희극』이라는 큰 소설 세계를 만든 프랑스 작가 있잖아.","발자크"],
+["austen","제인 오스틴","문학","『오만과 편견』을 쓴 영국 작가","엘리자베스 베넷과 다아시가 등장해요.","오스…","『오만과 편견』에서 다아시를 등장시킨 작가 있잖아.","오스틴"],
+["cervantes","미겔 데 세르반테스","문학","『돈키호테』를 쓴 스페인 작가","산초 판사와 함께 모험하는 기사의 이야기예요.","세르…","풍차를 거인으로 오해한 기사 이야기를 쓴 사람 있잖아.","세르반테스|미겔 세르반테스"],
+["hugo","빅토르 위고","문학","『레 미제라블』을 쓴 프랑스 작가","장 발장과 자베르가 등장해요.","위고…","장 발장 이야기 쓴 프랑스 작가 있잖아.","위고"],
+["hesse","헤르만 헤세","문학","『데미안』과 『싯다르타』를 쓴 작가","『수레바퀴 아래서』도 유명해요.","헤세…","싱클레어와 데미안 이야기 쓴 작가 있잖아.","헤세"],
+["goethe","요한 볼프강 폰 괴테","문학","『파우스트』와 『젊은 베르테르의 슬픔』을 쓴 독일 작가","메피스토펠레스가 등장하는 작품을 썼어요.","괴테…","악마와 계약하는 파우스트 이야기 쓴 독일 작가 있잖아.","괴테|요한 볼프강 괴테"],
+["akutagawa","아쿠타가와 류노스케","문학","『라쇼몽』과 『덤불 속』을 쓴 일본 작가","일본의 유명 문학상이 이 인물의 이름에서 따왔어요.","아쿠…","라쇼몽이라는 단편 쓴 일본 작가 있잖아.","아쿠타가와|아쿠타가와 류노스께"],
+["golding","윌리엄 골딩","문학","『파리 대왕』을 쓴 영국 작가","무인도에 남겨진 소년들의 이야기예요.","골딩…","소년들이 무인도에서 갈등하는 소설을 쓴 작가 있잖아.","골딩"],
+["orwell","조지 오웰","문학","『1984』와 『동물농장』을 쓴 작가","빅 브라더라는 표현으로도 유명해요.","오웰…","빅 브라더가 감시하는 세계를 쓴 소설가 있잖아.","오웰"],
+["faulkner","윌리엄 포크너","문학","『소리와 분노』를 쓴 미국 작가","미국 남부를 배경으로 한 작품들이 유명해요.","포크…","『소리와 분노』 쓴 미국 소설가 있잖아.","포크너"],
+["dante","단테 알리기에리","문학","『신곡』을 쓴 이탈리아 시인","베르길리우스의 안내로 사후 세계를 여행해요.","단테…","지옥·연옥·천국을 여행하는 『신곡』 쓴 사람 있잖아.","단테"],
+["shakespeare","윌리엄 셰익스피어","문학","『햄릿』과 『맥베스』를 쓴 영국 극작가","『로미오와 줄리엣』도 유명해요.","셰익…","햄릿의 '사느냐 죽느냐' 독백을 쓴 극작가 있잖아.","셰익스피어|셰익스피어|세익스피어"],
+["huxley","올더스 헉슬리","문학","『멋진 신세계』를 쓴 영국 작가","기술과 조건화로 통제되는 미래 사회를 그렸어요.","헉슬…","인공적으로 계급을 구분하는 미래 사회를 쓴 작가 있잖아.","헉슬리"],
+["hemingway","어니스트 헤밍웨이","문학","『노인과 바다』를 쓴 미국 소설가","『무기여 잘 있거라』의 작가이기도 해요.","헤밍…","노인이 큰 물고기와 싸우는 소설 쓴 작가 있잖아.","헤밍웨이"],
+["kazantzakis","니코스 카잔차키스","문학","『그리스인 조르바』를 쓴 그리스 작가","자유분방한 조르바가 등장해요.","카잔…","『그리스인 조르바』를 쓴 그리스 소설가 있잖아.","카잔차키스"],
+["nietzsche","프리드리히 니체","철학","『차라투스트라는 이렇게 말했다』의 저자","초인과 영원회귀 사상으로 유명해요.","니체…","'신은 죽었다'는 문장으로 널리 알려진 철학자 있잖아.","니체"],
+["kant","이마누엘 칸트","철학","『순수이성비판』을 쓴 독일 철학자","정언명령과 선험철학으로 유명해요.","칸트…","정언명령을 말한 철학자 있잖아.","칸트"],
+["descartes","르네 데카르트","철학","'나는 생각한다, 고로 존재한다'를 말한 철학자","방법적 회의를 강조했어요.","데카…","의심할 수 없는 사고 주체를 찾으려 했던 철학자 있잖아.","데카르트"],
+["hegel","게오르크 빌헬름 프리드리히 헤겔","철학","『정신현상학』을 쓴 독일 철학자","쇼펜하우어가 경쟁적으로 강의 시간을 잡았던 상대예요.","헤겔…","쇼펜하우어가 의식했던 독일 관념론 철학자 있잖아.","헤겔|게오르크 헤겔"],
+["kierkegaard","쇠렌 키르케고르","철학","『죽음에 이르는 병』을 쓴 덴마크 철학자","실존주의의 선구자로 자주 언급돼요.","키르…","절망과 불안을 탐구한 덴마크 철학자 있잖아.","키르케고르"],
+["arendt","한나 아렌트","철학","『예루살렘의 아이히만』을 쓴 정치사상가","'악의 평범성'이라는 표현으로 유명해요.","아렌…","아이히만 재판을 보도하며 악의 평범성을 논한 사람 있잖아.","아렌트"],
+["newton","아이작 뉴턴","과학","『프린키피아』를 쓴 과학자","운동 법칙과 만유인력의 법칙으로 유명해요.","뉴턴…","사과와 만유인력 이야기로 유명한 과학자 있잖아.","뉴턴"],
+["galileo","갈릴레오 갈릴레이","과학","망원경 관측으로 목성의 위성들을 발견한 과학자","지동설을 지지한 이탈리아 학자예요.","갈릴…","목성의 위성 관측으로 유명한 이탈리아 과학자 있잖아.","갈릴레이|갈릴레오"],
+["einstein","알베르트 아인슈타인","과학","특수·일반 상대성이론을 발전시킨 물리학자","광전효과 설명으로 노벨 물리학상을 받았어요.","아인…","상대성이론을 만든 과학자 있잖아.","아인슈타인"],
+["darwin","찰스 다윈","과학","『종의 기원』을 쓴 자연과학자","자연선택에 의한 진화 이론으로 유명해요.","다윈…","비글호를 타고 항해한 진화론자 있잖아.","다윈"],
+["curie","마리 퀴리","과학","라듐과 폴로늄 발견에 기여한 과학자","물리학상과 화학상을 모두 받은 노벨상 수상자예요.","퀴리…","방사능 연구로 두 분야의 노벨상을 받은 과학자 있잖아.","퀴리|마리아 스클로도프스카 퀴리"],
+["turing","앨런 튜링","과학","튜링 머신 개념을 제시한 수학자","영국의 암호 해독과 컴퓨터 과학 역사에서 중요해요.","튜링…","튜링 테스트 이름의 주인공인 수학자 있잖아.","튜링"],
+["mendel","그레고어 멘델","과학","완두콩 교배 실험으로 유전 법칙을 연구한 인물","우성과 열성 개념으로 잘 알려져 있어요.","멘델…","완두콩으로 유전을 연구한 수도사 있잖아.","멘델"],
+["medias","인 메디아스 레스","개념","이야기를 사건 한가운데에서 시작하는 서사 기법","라틴어로 '사건 한가운데로' 정도의 의미예요.","인 메…","설명 없이 사건이 한창인 장면에서 시작하는 기법 있잖아.","in medias res|인메디아스레스"],
+["macguffin","맥거핀","개념","등장인물의 행동을 유발하지만 그 자체의 내용은 핵심이 아닐 수 있는 장치","히치콕의 영화 이야기에서 자주 언급돼요.","맥거…","모두가 찾지만 정체보다 추적 자체가 중요한 물건 있잖아.","맥거핀|macguffin"],
+["redherring","레드 헤링","개념","독자의 추리를 엉뚱한 방향으로 이끄는 미끼 단서","추리소설에서 오해를 유도하는 장치예요.","레드…","범인인 것처럼 보이게 하는 가짜 단서 있잖아.","red herring|레드헤링"],
+["foreshadow","포어섀도잉","개념","나중에 벌어질 일을 미리 암시하는 서사 기법","복선과 밀접한 개념이에요.","포어…","이후 사건을 예고하는 작은 단서 배치하는 기법 있잖아.","foreshadowing|포어셰도잉|포어쉐도잉"],
+["cliffhanger","클리프행어","개념","긴장되는 순간에 이야기를 끊어 다음 내용을 궁금하게 만드는 기법","회차 마지막에 큰 위기를 남기기도 해요.","클리…","드라마가 가장 중요한 순간에 딱 끝나는 장치 있잖아.","cliffhanger|클리프 행어"],
+["pastiche","파스티시","개념","다른 작품이나 작가의 특징적 스타일을 모방·혼합하는 창작 방식","패러디와 달리 조롱이 목적일 필요는 없어요.","파스…","여러 유명 작가의 문체를 본떠 작품 만드는 방식 있잖아.","pastiche"],
+["mise","미장센","개념","영화 장면 안에서 인물·소품·조명·배경 등을 배치하는 연출 요소","프랑스어에서 유래한 영화·연극 용어예요.","미장…","카메라에 담기는 장면의 시각적 배치와 연출 있잖아.","mise en scene|mise-en-scène|미장쎈"],
+["metafiction","메타픽션","개념","자신이 허구의 이야기임을 드러내거나 이야기 자체를 성찰하는 소설","소설 속 인물이 자신의 이야기가 쓰이고 있음을 알 수도 있어요.","메타…","이야기 안에서 이야기의 허구성을 드러내는 기법 있잖아.","metafiction|메타 픽션"],
+["catharsis","카타르시스","개념","비극 등을 접하면서 감정이 정화·해소되는 경험을 뜻하는 말","아리스토텔레스의 『시학』에서 논의되는 개념이에요.","카타…","비극을 보고 감정이 정화된다는 개념 있잖아.","catharsis"]
+].map(x=>({id:x[0],name:x[1],cat:x[2],clue:x[3],hint:x[4],sound:x[5],talk:x[6],aliases:x[7].split("|")}));
+const KEY="jake-noun-retrieval-v1";
+const $=id=>document.getElementById(id);
+let db=load(), queue=[],index=0,active=null,stage=0,finished=[],reviewOnly=false,repeatIds=new Set(),missedPending=new Set(),mistyped=false,modeChoice="clue";
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&typeof x==="object")return {items:x.items||{},sessions:x.sessions||0}}catch(e){}return {items:{},sessions:0}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){$("reviewMsg").textContent="기록 저장에 실패했습니다. 브라우저 저장 공간이나 사생활 보호 설정을 확인해 주세요."}}
+function normalize(s){return String(s||"").toLocaleLowerCase().normalize("NFKC").replace(/[\s·.,!?‘’"'()\-–—_]/g,"")}
+function matches(item,str){const n=normalize(str);if(!n)return false;return [item.name].concat(item.aliases).some(x=>normalize(x)===n)}
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function label(item){return item.cat+" · "+item.name}
+function dueItems(){const now=Date.now();return BANK.filter(x=>{const s=db.items[x.id];return s && s.due<=now})}
+function refresh(){const now=Date.now();$("seenStat").textContent=Object.keys(db.items).length;$("dueStat").textContent=dueItems().length;$("sessionStat").textContent=db.sessions;$("reviewMsg").textContent=dueItems().length?"예정된 복습이 있어요. 복습은 부담 없이 조금씩 하세요.":"복습할 이름이 아직 없어요. 새 훈련을 해보세요."}
+function begin(isReview){reviewOnly=isReview;const cat=$("category").value;let choices=isReview?dueItems():BANK.filter(x=>cat==="all"||x.cat===cat);if(!choices.length){$("reviewMsg").textContent=isReview?"지금 복습할 이름이 없어요. 무작위 훈련을 선택해 주세요.":"해당 분야에 문제가 없습니다.";return}
+const count=Number($("count").value)||10;queue=shuffle(choices).slice(0,count).map(x=>({id:x.id,repeat:false}));index=0;finished=[];repeatIds=new Set();missedPending=new Set();modeChoice=$("mode").value;$("setup").classList.add("hidden");$("finish").classList.add("hidden");$("game").classList.remove("hidden");showQuestion()}
+function showQuestion(){const task=queue[index];if(!task){endSession();return}active=BANK.find(x=>x.id===task.id);stage=0;mistyped=false;$("counter").textContent=(index+1)+" / "+queue.length+(task.repeat?" · 다시 인출":"");$("topic").textContent=active.cat;$("way").textContent=task.repeat?"지연 재인출":"자유 인출";$("bar").style.width=Math.round((index/queue.length)*100)+"%";
+const talk=modeChoice==="talk"||(modeChoice==="mixed"&&Math.random()<.5);$("prompt").textContent=talk?"대화 중에 말하려고 합니다. “"+active.talk+"” 이때 떠올려야 할 이름은?":active.clue+" — 누구/무엇일까요?";
+$("clueBox").classList.add("hidden");$("clueBox").textContent="";$("feedback").classList.add("hidden");$("choices").classList.add("hidden");$("choices").replaceChildren();$("guess").value="";$("guess").disabled=false;$("result").classList.add("hidden");$("responseActions").classList.remove("hidden");$("bridge").open=false;$("bridgeText").value="";$("hint").textContent="막힘 · 단서 받기";$("recognize").textContent="보기에서 알아보기";$("guess").focus()}
+function markWrong(){mistyped=true;$("feedback").classList.remove("hidden");$("feedback").classList.add("try");$("feedback").textContent="아직 맞지 않아요. 잠깐 쉬고 다시 생각하거나 단서를 받아 보세요. 오답 한 번으로 훈련이 실패하는 것은 아닙니다."}
+function grade(kind){if(!active)return;const task=queue[index];finished.push({id:active.id,name:active.name,kind:kind,repeat:task.repeat});const prior=db.items[active.id]||{level:0,count:0};
+const independent=kind==="자유 인출"||kind==="의미 단서";
+const level=independent?Math.min(prior.level+1,4):0;
+const days=independent?[1,3,7,14][Math.max(0,level-1)]:1;
+db.items[active.id]={level:level,count:prior.count+1,last:Date.now(),due:Date.now()+days*86400000,kind:kind};save();
+if(!task.repeat&&!independent&&!repeatIds.has(active.id)){repeatIds.add(active.id);const slot=Math.min(queue.length,index+4);queue.splice(slot,0,{id:active.id,repeat:true})}
+$("resultLabel").textContent=kind;$("resultName").textContent=active.name;$("resultDetail").textContent=active.clue+" / "+active.hint;$("resultBridge").textContent="대화 연결 연습: “"+active.talk+"” → "+active.name+". 이름이 막히면 우선 특징을 말하며 대화를 계속해 보세요.";
+$("result").classList.remove("hidden");$("responseActions").classList.add("hidden");$("choices").classList.add("hidden");$("guess").disabled=true;$("feedback").classList.add("hidden");$("feedback").classList.remove("try");$("bar").style.width=Math.round(((index+1)/queue.length)*100)+"%"}
+function submit(){if(!active||!$("result").classList.contains("hidden"))return;const value=$("guess").value.trim();if(!value){$("feedback").classList.remove("hidden");$("feedback").classList.add("try");$("feedback").textContent="이름이 떠오르지 않으면 ‘막힘 · 단서 받기’를 눌러도 됩니다.";return}if(matches(active,value)){grade(stage===0?"자유 인출":stage===1?"의미 단서":"첫소리 단서")}else markWrong()}
+function showHint(){if(!active)return;$("feedback").classList.add("hidden");stage++;$("clueBox").classList.remove("hidden");
+if(stage===1){$("clueBox").textContent="의미 단서: "+active.hint;$("hint").textContent="다음 단서 · 첫소리"}else if(stage===2){$("clueBox").textContent="첫소리 단서: "+active.sound;$("hint").textContent="보기에서 알아보기"}else{showChoices()}}
+function showChoices(){stage=3;$("clueBox").classList.remove("hidden");$("clueBox").textContent="보기에서 이름을 알아보세요. 스스로 떠올리는 것과 보기에서 알아보는 것은 서로 다른 기억 과제입니다.";
+$("choices").replaceChildren();const foils=shuffle(BANK.filter(x=>x.cat===active.cat&&x.id!==active.id)).slice(0,3);shuffle([active,...foils]).forEach(x=>{const b=document.createElement("button");b.type="button";b.textContent=x.name;b.onclick=()=>{if(x.id===active.id)grade("보기 재인");else{mistyped=true;$("feedback").classList.remove("hidden");$("feedback").classList.add("try");$("feedback").textContent="이 이름은 아니에요. 다시 골라 보거나 정답을 확인해 보세요."}};$("choices").appendChild(b)});
+$("choices").classList.remove("hidden");$("hint").textContent="정답 확인";$("recognize").textContent="정답 확인"}
+function hintAction(){if(stage<3)showHint();else grade("정답 확인")}
+function next(){index++;showQuestion()}
+function endSession(){db.sessions++;save();$("game").classList.add("hidden");$("finish").classList.remove("hidden");
+const latest=new Map();finished.forEach(x=>latest.set(x.id,x));const last=[...latest.values()];
+const free=last.filter(x=>x.kind==="자유 인출").length,help=last.filter(x=>["의미 단서","첫소리 단서"].includes(x.kind)).length,see=last.length-free-help;
+$("freeEnd").textContent=free;$("helpEnd").textContent=help;$("seeEnd").textContent=see;
+$("endText").textContent="한 번에 생각나지 않았던 이름도 연습을 통해 다시 연결할 수 있어요. 오늘 막힌 이름은 복습 목록에 들어갔습니다. 기억력에 대한 판정이나 진단 점수는 아닙니다.";
+$("summary").replaceChildren();last.forEach(x=>{const span=document.createElement("span");span.className="chip";span.textContent=x.name+" · "+x.kind;$("summary").appendChild(span)});refresh()}
+$("start").addEventListener("click",()=>begin(false));$("review").addEventListener("click",()=>begin(true));$("submit").addEventListener("click",submit);$("guess").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();submit()}});$("hint").addEventListener("click",hintAction);$("recognize").addEventListener("click",()=>{if(stage<3)showChoices();else grade("정답 확인")});$("next").addEventListener("click",next);$("stop").addEventListener("click",endSession);$("restart").addEventListener("click",()=>{$("finish").classList.add("hidden");$("setup").classList.remove("hidden");refresh()});refresh();
+</script>
+</body>
+</html>
