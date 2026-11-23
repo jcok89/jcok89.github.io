@@ -2,59 +2,75 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="트럼프 카드 20장의 위치를 기억하고 5장으로 최고의 족보를 만들어 보세요.">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="트럼프 카드의 종류와 위치를 따로 채점하고 오답을 다시 회상하는 훈련">
 <title>트럼프 카드 기억 | Jake의 기억력 훈련실</title>
 <link rel="stylesheet" href="portal.css">
 <link rel="stylesheet" href="card-memory.css">
-<script src="card-memory.js" defer></script>
+<link rel="stylesheet" href="card-training.css">
+<script src="card-training.js?v=1" defer></script>
 </head>
 <body>
 <main class="page-shell card-lab">
-    <a class="back-link" href="memory.html">← 기억력 훈련실</a>
-    <header class="lab-heading">
-        <span class="eyebrow">MEMORY LAB / CARD TABLE</span>
-        <h1>트럼프 카드 기억</h1>
-        <p>숫자와 무늬를 위치에 연결해 기억하세요.</p>
-    </header>
-    <section id="setup" class="panel" aria-label="훈련 설정">
-        <fieldset>
-            <legend>훈련 모드</legend>
-            <div class="modes">
-                <label><input type="radio" name="mode" value="recall" checked><span><strong>위치 맞추기</strong><small>제시된 카드가 있던 자리를 찾습니다.</small></span></label>
-                <label><input type="radio" name="mode" value="hand"><span><strong>족보 챌린지</strong><small>공개 3장에 숨겨진 2장을 더해 가장 강한 조합을 만듭니다.</small></span></label>
-            </div>
-        </fieldset>
-        <div class="settings">
-            <label>카드 수<select id="size"><option value="8">8장 · 입문</option><option value="12">12장 · 연습</option><option value="20" selected>20장 · 실전</option></select></label>
-            <label>기억 시간<select id="seconds"><option value="15">15초</option><option value="30" selected>30초</option><option value="60">60초</option><option value="0">시간 제한 없음</option></select></label>
-            <label id="question-setting">문제 수<select id="questions"><option value="5" selected>5문제</option><option value="all">카드 전부</option></select></label>
-            <button id="start" type="button">훈련 시작</button>
+<a class="back-link" href="memory.html">← 기억력 훈련실</a>
+<header class="lab-heading">
+    <span class="eyebrow">MEMORY LAB / CARD TABLE</span>
+    <h1>트럼프 카드 기억</h1>
+    <p>카드의 모습과 자리를 연결하고, 헷갈린 카드는 다시 떠올려 보세요.</p>
+    <a href="card-memory-classic.html">족보 챌린지 · 기존 위치 맞추기 →</a>
+</header>
+<section id="setup" class="panel" aria-label="훈련 설정">
+    <fieldset>
+        <legend>오늘의 훈련</legend>
+        <div class="modes training-modes">
+            <label><input type="radio" name="mode" value="what"><span><strong>종류 기억</strong><small>본 카드의 숫자와 무늬를 고릅니다.</small></span></label>
+            <label><input type="radio" name="mode" value="where"><span><strong>위치 기억</strong><small>제시된 카드가 있던 자리를 찾습니다.</small></span></label>
+            <label><input type="radio" name="mode" value="both" checked><span><strong>종류 + 위치</strong><small>각 자리에 있던 카드를 떠올립니다.</small></span></label>
         </div>
-    </section>
-    <section id="table" hidden class="table" aria-labelledby="phase">
-        <div class="table-header">
-            <h2 id="phase" tabindex="-1"></h2>
-            <span id="timer" role="timer" aria-live="off"></span>
-        </div>
-        <p id="instruction" role="status"></p>
-        <div id="prompt" hidden></div>
-        <div id="board" class="board" role="group" aria-label="카드 배치"></div>
-        <p id="feedback" role="status" class="feedback"></p>
-        <div id="actions" class="actions"></div>
-    </section>
-    <section id="result" hidden class="panel result" aria-labelledby="result-title">
-        <h2 id="result-title" tabindex="-1">훈련 결과</h2>
-        <div id="summary"></div>
-        <button id="again" type="button">새 카드로 다시 하기</button>
-        <button id="settings" type="button" class="secondary">훈련 설정</button>
-    </section>
-    <details class="panel guide">
-        <summary>훈련 방법과 족보 순서</summary>
-        <p><strong>위치 맞추기:</strong> 카드를 한꺼번에 봅니다. 카드가 뒤집히면 화면에 나온 카드의 위치를 한 번 선택합니다. 카드 번호와 무늬가 모두 같은 위치를 맞히면 1점입니다.</p>
-        <p><strong>족보 챌린지:</strong> 카드를 뒤집은 뒤 같은 덱의 남은 카드 중 3장이 공개됩니다. 숨겨진 카드 2장을 고른 뒤 제출하세요. 결과에서 내 5장과 이번 배치에서 가능했던 최고 조합을 비교합니다.</p>
-        <p><strong>약한 족보 → 강한 족보:</strong> 하이 카드 → 원 페어 → 투 페어 → 트리플 → 스트레이트 → 플러시 → 풀하우스 → 포카드 → 스트레이트 플러시. 같은 족보라도 카드 숫자로 우열을 가립니다. A는 가장 높으며, A–2–3–4–5에서는 1로 셉니다.</p>
-    </details>
+    </fieldset>
+    <div class="settings">
+        <label>카드 수 <input id="size" type="number" min="3" max="20" value="5" list="levels" required><small>초급 5 · 중급 10 · 고급 20</small></label>
+        <datalist id="levels"><option value="5"><option value="10"><option value="20"></datalist>
+        <label>관찰 시간(초) <input id="seconds" type="number" min="0" max="300" value="30" step="1" required><small>0은 시간 제한 없음</small></label>
+    </div>
+    <div class="toggles">
+        <label><input id="adaptive" type="checkbox" checked> 성적에 맞는 난이도 제안</label>
+        <label><input id="chunks" type="checkbox" checked> 5장씩 구역으로 묶고 순서대로 회상</label>
+        <label><input id="palace" type="checkbox"> 관찰 중 기억의 궁전 힌트</label>
+    </div>
+    <div class="actions">
+        <button id="start" type="button">새 랜덤 훈련</button>
+        <button id="resume" type="button" class="secondary" hidden>중단점부터 이어하기</button>
+    </div>
+    <p id="resume-note" class="subtle"></p>
+</section>
+<section id="table" hidden class="table" aria-labelledby="phase">
+    <div class="table-header"><h2 id="phase" tabindex="-1"></h2><span id="timer" role="timer"></span></div>
+    <p id="instruction" role="status"></p>
+    <div id="prompt" hidden></div>
+    <div id="board" class="board" role="group" aria-label="카드 배치"></div>
+    <div id="picker"></div>
+    <p id="feedback" role="status" class="feedback"></p>
+    <div id="actions" class="actions"></div>
+</section>
+<section id="result" hidden class="panel result" aria-labelledby="result-title">
+    <h2 id="result-title" tabindex="-1">첫 회상 결과</h2>
+    <div id="summary"></div>
+    <div id="review-grid"></div>
+    <div id="result-actions" class="actions"></div>
+</section>
+<details class="panel guide" id="help">
+    <summary>채점 기준과 기억법</summary>
+    <div id="help-content">
+    <p><b>종류(What):</b> 기억해 낸 실제 카드 수 ÷ 출제 카드 수. 숫자와 무늬가 모두 같아야 합니다. 자리는 보지 않습니다.</p>
+    <p><b>위치(Where):</b> 위치 모드에서는 올바른 위치 수 ÷ 제시된 카드 수. 통합 모드에서는 제시된 배열에서 기억해 낸 카드 중 제자리에 놓은 비율입니다. 기억해 낸 카드가 없으면 ‘측정 안 됨’으로 표시합니다.</p>
+    <p><b>완전 일치:</b> 통합 모드에서 올바른 자리에 놓은 카드 수 ÷ 출제 카드 수. 한 카드가 다른 자리에 있어도 종류 점수에는 반영됩니다.</p>
+    <p>고정된 장소를 순서대로 상상한 뒤 카드의 그림을 장소에 붙여 보세요. 5장씩 구역을 나누면 한 줄씩 돌아보며 회상할 수 있습니다. 기억의 궁전 힌트를 켜면 관찰 중 카드별 연상 키워드를 바꿀 수 있습니다. 구역 기능을 함께 켜면 현관·거실·주방·서재를 순서대로 사용합니다.</p>
+    <p>처음에는 관찰 시간을 넉넉하게 잡고 정확도에 집중하세요. 통계에는 첫 회상만 쌓이며, 같은 배치의 재도전은 따로 표시됩니다.</p>
+    </div>
+</details>
+<section class="panel guide" aria-labelledby="history-title"><h2 id="history-title">훈련 기록</h2><div id="history"></div></section>
+<p id="storage-warning" class="subtle" role="status"></p>
 </main>
 </body>
 </html>
