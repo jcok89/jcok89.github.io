@@ -32,3 +32,5 @@
 .review-tile small { display:block; color:#475569; margin-bottom:3px; }
 .review-tile.missed { border-color:#ab243b; background:#fff3f5; }
 .review-tile .mini { padding:2px 3px; font-size:.9rem; }
+
+.card-lab .board:not(.chunked), .card-lab .zone { grid-template-columns: repeat(var(--card-columns,5),minmax(0,1fr)); }
