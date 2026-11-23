@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
-const {score,recommendation,validSession}=require('./card-training.js');
+const {score,recommendation,validSession,columns}=require('./card-training.js');
 const cards=[0,14,30,50,21], targets=[0,1,2,3,4];
 const test=(mode,answers,scope=targets)=>score(mode,cards,scope,answers);
 assert.deepEqual(test('what',[30,50,4]),{
@@ -21,7 +21,7 @@ assert.deepEqual(retry.outside,[]);
 assert.equal(test('what',[0,0,0]).what,20);
 const cfg={mode:'both',size:5,seconds:30,adaptive:true};
 const runs=values=>values.map(primary=>({...cfg,primary}));
-assert.equal(recommendation(cfg,runs([90,95,100])).size,10);
+assert.equal(recommendation(cfg,runs([90,95,100])).size,8);
 assert.equal(recommendation(cfg,runs([90,95,89])),null);
 assert.equal(recommendation(cfg,runs([30,60,40])).seconds,45);
 assert.equal(recommendation({...cfg,adaptive:false},runs([100,100,100])),null);
@@ -34,3 +34,15 @@ for(const patch of [{latest:{}},{cards:[0,0,30,50,21]},{order:[]},{cursor:8},{re
     assert.equal(validSession({...sample,...patch}),false);
 }
 console.log('Pass: independent scores, swapped cards, missing cards, scoped retry, adaptive thresholds, invalid checkpoints.');
+
+assert.equal(columns(8),4);
+assert.equal(columns(30),5);
+for (const [size,next] of [[8,10],[10,15],[15,20],[20,25],[25,30],[30,null]]) {
+    const settings={...cfg,size};
+    const result=recommendation(settings,[96,94,100].map(primary=>({...settings,primary})));
+    assert.equal(result?.size??null,next);
+    const ids=Array.from({length:size},(_,i)=>i);
+    assert.equal(validSession({...sample,cfg:settings,cards:ids,order:ids,targets:ids,cursor:0,
+        answers:ids.map(()=>null),phase:'observe',first:null,latest:null}),true);
+}
+console.log('Pass: all six card counts, adaptive sequence, 8-card layout columns.');

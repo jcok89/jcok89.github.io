@@ -4,7 +4,9 @@ const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 const suits = ['♠','♥','♦','♣'];
 const suitNames = ['스페이드','하트','다이아몬드','클로버'];
 const deck = Array.from({length:52}, (_,i)=>i);
-const rooms = ['현관','거실','주방','서재'];
+const rooms = ['현관','거실','주방','서재','베란다','침실'];
+const sizes = [8,10,15,20,25,30];
+const columns = size => size===8 ? 4 : 5;
 const images = ['왕관','백조','삼각대','의자','별','주사위','무지개','안경','풍선','볼링핀','기사','여왕','왕'];
 const suitImages = ['삽','하트','보석','클로버'];
 const modes = {what:'종류 기억',where:'위치 기억',both:'종류 + 위치'};
@@ -46,11 +48,11 @@ function recommendation(cfg, history) {
     const last=history.filter(r=>r.mode===cfg.mode && r.size===cfg.size && r.seconds===cfg.seconds).slice(0,3);
     if(last.length<3) return null;
     if(last.every(r=>r.primary>=90)){
-        const next=[5,10,20].find(n=>n>cfg.size);
+        const next=sizes.find(n=>n>cfg.size);
         if(next) return {size:next, seconds:cfg.seconds, text:'같은 설정에서 최근 3회 모두 90% 이상입니다. '+next+'장에 도전해 보세요.'};
     }
     if(last.reduce((a,r)=>a+r.primary,0)/3<65){
-        const next=[10,5,3].find(n=>n<cfg.size);
+        const next=[...sizes].reverse().find(n=>n<cfg.size);
         const seconds=cfg.seconds && cfg.seconds<300 ? Math.min(300,cfg.seconds+15) : cfg.seconds;
         if(seconds!==cfg.seconds) return {size:cfg.size, seconds, text:'최근 3회 평균이 65% 미만입니다. 카드 수를 유지하고 관찰 시간을 '+seconds+'초로 늘려 보세요.'};
         if(next) return {size:next,seconds,text:'최근 3회 평균이 65% 미만입니다. '+next+'장으로 줄여 정확도를 먼저 높여 보세요.'};
@@ -70,7 +72,7 @@ function validResult(r,n) {
 
 function validSession(s) {
     return s?.version===1 && Object.hasOwn(modes,s.cfg?.mode) && Number.isInteger(s.cfg.size) &&
-        s.cfg.size>=3 && s.cfg.size<=20 && Number.isInteger(s.cfg.seconds) && s.cfg.seconds>=0 && s.cfg.seconds<=300 &&
+        s.cfg.size>=3 && s.cfg.size<=30 && Number.isInteger(s.cfg.seconds) && s.cfg.seconds>=0 && s.cfg.seconds<=300 &&
         ['observe','recall','review'].includes(s.phase) && Array.isArray(s.cards) &&
         s.cards.length===s.cfg.size && unique(s.cards).length===s.cards.length && s.cards.every(validId) &&
         Array.isArray(s.order) && s.order.length===s.cards.length && unique(s.order).length===s.cards.length &&
@@ -88,7 +90,7 @@ function validSession(s) {
         (s.phase!=='review' || (validResult(s.latest,s.cards.length) && s.latest.n===s.targets.length));
 }
 
-if(typeof module!=='undefined'&&module.exports){ module.exports={score,recommendation,validSession}; return; }
+if(typeof module!=='undefined'&&module.exports){ module.exports={score,recommendation,validSession,columns}; return; }
 
 const $=id=>document.getElementById(id);
 const board=$('board');
@@ -155,11 +157,12 @@ function tick(){
 function apply(cfg){
     if(!cfg)return;
     document.querySelectorAll('[name=mode]').forEach(r=>{if(r.value===cfg.mode)r.checked=true;});
-    for(const id of ['size','seconds']) if(Number.isInteger(cfg[id])) $(id).value=cfg[id];
+    if(Number.isInteger(cfg.size)) $('size').value=sizes.find(n=>n>=cfg.size)??sizes.at(-1);
+    if(Number.isInteger(cfg.seconds)) $('seconds').value=cfg.seconds;
     for(const id of ['adaptive','chunks','palace']) if(typeof cfg[id]==='boolean') $(id).checked=cfg[id];
 }
 function config(){
-    if(!$('size').reportValidity()||!$('seconds').reportValidity())return null;
+    if(!sizes.includes(Number($('size').value))||!$('seconds').reportValidity())return null;
     return {mode:document.querySelector('[name=mode]:checked').value,size:Number($('size').value),seconds:Number($('seconds').value),
         adaptive:$('adaptive').checked,chunks:$('chunks').checked,palace:$('palace').checked};
 }
@@ -215,12 +218,14 @@ function drawBoard(face, active, current){
     board.replaceChildren();
     const {cards,cfg,targets}=session;
     const set=new Set(targets);
+    const cols=columns(cards.length);
+    board.style.setProperty('--card-columns',cols);
     board.classList.toggle('chunked',cfg.chunks);
     let group=board;
     cards.forEach((id,i)=>{
-        if(cfg.chunks&&i%5===0){
+        if(cfg.chunks&&i%cols===0){
             group=element('div',undefined,'zone');
-            group.append(element('b',(Math.floor(i/5)+1)+'구역'+(face&&cfg.palace?' · '+rooms[Math.floor(i/5)]:''),'zone-title'));
+            group.append(element('b',(Math.floor(i/cols)+1)+'구역'+(face&&cfg.palace?' · '+rooms[Math.floor(i/5)]:''),'zone-title'));
             board.append(group);
         }
         const show=face&&set.has(i);
@@ -303,7 +308,7 @@ function render(focus=false, pickerFocus=false){
     }else{
         const target=targets[cursor];
         const count=cfg.mode==='what'?answers.length:cursor;
-        const part=cfg.chunks&&cfg.mode!=='what'?' · '+(Math.floor(target/5)+1)+'구역':'';
+        const part=cfg.chunks&&cfg.mode!=='what'?' · '+(Math.floor(target/columns(session.cards.length))+1)+'구역':'';
         $('phase').textContent=(session.attempt?'5. 다시 회상':'2. 가린 카드 회상')+part;
         $('instruction').textContent=cfg.mode==='what'?
             '본 카드의 숫자와 무늬를 선택하세요. '+count+' / '+targets.length+'장':
@@ -401,6 +406,7 @@ function drawResult(){
     const preview=element('details',undefined,'guide');
     preview.append(element('summary','전체 정답 배열 보기'));
     const layout=element('ol',undefined,'board review-layout');
+    layout.style.setProperty('--card-columns',columns(cards.length));
     cards.forEach((id,i)=>{
         const missed=r.missed.includes(i);
         const item=element('li',undefined,'review-tile'+(missed?' missed':''));
