@@ -1,0 +1,34 @@
+.training-modes { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.settings input[type=number], .card-lab input[type=text] { display:block; width:100%; min-height:44px; padding:7px 10px; border:1px solid #94aaa2; border-radius:9px; font:inherit; }
+.settings small { display:block; margin-top:4px; color:#475569; }
+.toggles { display:flex; flex-wrap:wrap; gap:6px 15px; margin-top:12px; }
+.toggles label { display:flex; align-items:center; min-height:44px; gap:6px; }
+.subtle { color:#475569; font-size:.9rem; }
+.board.chunked { grid-template-columns:1fr; gap:10px; }
+.zone { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:clamp(4px,1vw,9px); border:1px solid #89ad9d; border-radius:12px; padding:5px; }
+.zone-title { grid-column:1/-1; font-size:.78rem; }
+.slot .slot-id { position:absolute; bottom:3px; right:4px; font-size:.63rem; }
+.slot.back .slot-id { color:#fff; }
+.slot.current { border-color:#ffc34b; box-shadow:inset 0 0 0 2px #ffc34b; }
+.slot .slot-note { font-weight:600; font-size:.55em; overflow-wrap:anywhere; max-width:100%; }
+.pick-panel { margin-top:12px; padding:12px; background:#f7fffb; color:#182633; border-radius:12px; }
+.pick-panel p { margin:0 0 7px; }
+.pick-fields { display:flex; flex-wrap:wrap; align-items:end; gap:8px; }
+.pick-fields label { flex:1 1 95px; }
+.selection { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.metric-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:8px; margin:12px 0; }
+.metric { padding:10px; background:#edf8f3; border-radius:9px; }
+.metric strong { display:block; margin-top:5px; }
+.review-list li { margin:5px 0; }
+.card-lab button, .card-lab summary { touch-action:manipulation; }
+.scroll-table { overflow-x:auto; }
+.card-lab table { width:100%; border-collapse:collapse; }
+.card-lab th, .card-lab td { text-align:left; padding:6px 8px; border-bottom:1px solid #d9e5df; }
+.card-lab .guide h2 { margin-top:0; }
+.card-lab .actions { margin-top:12px; }
+@media(max-width:600px){ .training-modes{grid-template-columns:1fr} .slot{min-height:48px} .slot .slot-note {font-size:.48em} }
+.review-layout { list-style:none; padding:0; }
+.review-tile { min-width:0; padding:4px 2px; text-align:center; border:1px solid #b9d1c9; border-radius:8px; background:#f6fbf8; }
+.review-tile small { display:block; color:#475569; margin-bottom:3px; }
+.review-tile.missed { border-color:#ab243b; background:#fff3f5; }
+.review-tile .mini { padding:2px 3px; font-size:.9rem; }
