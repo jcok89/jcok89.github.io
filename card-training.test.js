@@ -35,9 +35,11 @@ for(const patch of [{latest:{}},{cards:[0,0,30,50,21]},{order:[]},{cursor:8},{re
 }
 console.log('Pass: independent scores, swapped cards, missing cards, scoped retry, adaptive thresholds, invalid checkpoints.');
 
+assert.equal(columns(2),2);
+assert.equal(columns(4),4);
 assert.equal(columns(8),4);
 assert.equal(columns(30),5);
-for (const [size,next] of [[8,10],[10,15],[15,20],[20,25],[25,30],[30,null]]) {
+for (const [size,next] of [[2,4],[4,8],[8,10],[10,15],[15,20],[20,25],[25,30],[30,null]]) {
     const settings={...cfg,size};
     const result=recommendation(settings,[96,94,100].map(primary=>({...settings,primary})));
     assert.equal(result?.size??null,next);
@@ -45,4 +47,4 @@ for (const [size,next] of [[8,10],[10,15],[15,20],[20,25],[25,30],[30,null]]) {
     assert.equal(validSession({...sample,cfg:settings,cards:ids,order:ids,targets:ids,cursor:0,
         answers:ids.map(()=>null),phase:'observe',first:null,latest:null}),true);
 }
-console.log('Pass: all six card counts, adaptive sequence, 8-card layout columns.');
+console.log('Pass: all eight card counts, adaptive sequence, 8-card layout columns.');

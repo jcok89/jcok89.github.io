@@ -5,8 +5,9 @@ const suits = ['♠','♥','♦','♣'];
 const suitNames = ['스페이드','하트','다이아몬드','클로버'];
 const deck = Array.from({length:52}, (_,i)=>i);
 const rooms = ['현관','거실','주방','서재','베란다','침실'];
-const sizes = [8,10,15,20,25,30];
-const columns = size => size===8 ? 4 : 5;
+const sizes = [2,4,8,10,15,20,25,30];
+const shortDefaults = {2:10,4:20};
+const columns = size => size===2 ? 2 : size===4 || size===8 ? 4 : 5;
 const images = ['왕관','백조','삼각대','의자','별','주사위','무지개','안경','풍선','볼링핀','기사','여왕','왕'];
 const suitImages = ['삽','하트','보석','클로버'];
 const modes = {what:'종류 기억',where:'위치 기억',both:'종류 + 위치'};
@@ -72,7 +73,7 @@ function validResult(r,n) {
 
 function validSession(s) {
     return s?.version===1 && Object.hasOwn(modes,s.cfg?.mode) && Number.isInteger(s.cfg.size) &&
-        s.cfg.size>=3 && s.cfg.size<=30 && Number.isInteger(s.cfg.seconds) && s.cfg.seconds>=0 && s.cfg.seconds<=300 &&
+        s.cfg.size>=2 && s.cfg.size<=30 && Number.isInteger(s.cfg.seconds) && s.cfg.seconds>=0 && s.cfg.seconds<=300 &&
         ['observe','recall','review'].includes(s.phase) && Array.isArray(s.cards) &&
         s.cards.length===s.cfg.size && unique(s.cards).length===s.cards.length && s.cards.every(validId) &&
         Array.isArray(s.order) && s.order.length===s.cards.length && unique(s.order).length===s.cards.length &&
@@ -453,5 +454,15 @@ document.addEventListener('visibilitychange',()=>{
 });
 window.addEventListener('pagehide',()=>{if(session){stop();stash();}});
 window.addEventListener('pageshow',e=>{if(e.persisted&&session&&!paused)startClock();});
+$('size').addEventListener('change',()=>{
+    const seconds=shortDefaults[$('size').value];
+    if(seconds) $('seconds').value=seconds;
+});
+document.querySelectorAll('[data-preset-size]').forEach(control=>{
+    control.addEventListener('click',()=>{
+        $('size').value=control.dataset.presetSize;
+        $('seconds').value=control.dataset.presetSeconds;
+    });
+});
 apply(read('prefs',null));setup();
 })();
