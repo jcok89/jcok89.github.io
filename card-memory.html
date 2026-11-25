@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="portal.css">
 <link rel="stylesheet" href="card-memory.css">
 <link rel="stylesheet" href="card-training.css?v=2">
-<script src="card-training.js?v=3" defer></script>
+<script src="card-training.js?v=4" defer></script>
 </head>
 <body>
 <main class="page-shell card-lab">
@@ -29,7 +29,7 @@
         </div>
     </fieldset>
     <div class="settings">
-        <label>카드 수 <select id="size"><option value="2">2장</option><option value="4">4장</option><option value="8" selected>8장</option><option value="10">10장</option><option value="15">15장</option><option value="20">20장</option><option value="25">25장</option><option value="30">30장</option></select></label>
+        <label>카드 수 <select id="size"><option value="2">2장</option><option value="4">4장</option><option value="6">6장</option><option value="8" selected>8장</option><option value="10">10장</option><option value="15">15장</option><option value="20">20장</option><option value="25">25장</option><option value="30">30장</option></select></label>
         <label>관찰 시간(초) <input id="seconds" type="number" min="0" max="300" value="30" step="1" required><small>0은 시간 제한 없음</small></label>
     </div>
     <div class="actions" role="group" aria-label="짧은 훈련 설정">
@@ -37,6 +37,7 @@
         <button type="button" class="secondary" data-preset-size="2" data-preset-seconds="10">2장 · 10초</button>
         <button type="button" class="secondary" data-preset-size="4" data-preset-seconds="10">4장 · 10초</button>
         <button type="button" class="secondary" data-preset-size="4" data-preset-seconds="20">4장 · 20초</button>
+        <button type="button" class="secondary" data-preset-size="6" data-preset-seconds="30">6장 · 30초</button>
     </div>
     <div class="toggles">
         <label><input id="adaptive" type="checkbox" checked> 성적에 맞는 난이도 제안</label>
@@ -70,7 +71,7 @@
     <p><b>종류(What):</b> 기억해 낸 실제 카드 수 ÷ 출제 카드 수. 숫자와 무늬가 모두 같아야 합니다. 자리는 보지 않습니다.</p>
     <p><b>위치(Where):</b> 위치 모드에서는 올바른 위치 수 ÷ 제시된 카드 수. 통합 모드에서는 제시된 배열에서 기억해 낸 카드 중 제자리에 놓은 비율입니다. 기억해 낸 카드가 없으면 ‘측정 안 됨’으로 표시합니다.</p>
     <p><b>완전 일치:</b> 통합 모드에서 올바른 자리에 놓은 카드 수 ÷ 출제 카드 수. 한 카드가 다른 자리에 있어도 종류 점수에는 반영됩니다.</p>
-    <p>고정된 장소를 순서대로 상상한 뒤 카드의 그림을 장소에 붙여 보세요. 2장과 4장은 한 줄, 8장은 4장씩 두 줄, 나머지는 5장씩 배치합니다. 구역을 켜면 한 줄씩 돌아보며 회상할 수 있습니다. 기억의 궁전 힌트를 켜면 관찰 중 카드별 연상 키워드를 바꿀 수 있습니다. 구역 기능을 함께 켜면 현관에서 침실까지 순서대로 사용합니다.</p>
+    <p>고정된 장소를 순서대로 상상한 뒤 카드의 그림을 장소에 붙여 보세요. 2장과 4장은 한 줄, 6장은 3장씩 두 줄, 8장은 4장씩 두 줄, 나머지는 5장씩 배치합니다. 구역을 켜면 한 줄씩 돌아보며 회상할 수 있습니다. 기억의 궁전 힌트를 켜면 관찰 중 카드별 연상 키워드를 바꿀 수 있습니다. 구역 기능을 함께 켜면 현관에서 침실까지 순서대로 사용합니다.</p>
     <p>처음에는 관찰 시간을 넉넉하게 잡고 정확도에 집중하세요. 통계에는 첫 회상만 쌓이며, 같은 배치의 재도전은 따로 표시됩니다.</p>
     </div>
 </details>

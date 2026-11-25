@@ -21,7 +21,7 @@ assert.deepEqual(retry.outside,[]);
 assert.equal(test('what',[0,0,0]).what,20);
 const cfg={mode:'both',size:5,seconds:30,adaptive:true};
 const runs=values=>values.map(primary=>({...cfg,primary}));
-assert.equal(recommendation(cfg,runs([90,95,100])).size,8);
+assert.equal(recommendation(cfg,runs([90,95,100])).size,6);
 assert.equal(recommendation(cfg,runs([90,95,89])),null);
 assert.equal(recommendation(cfg,runs([30,60,40])).seconds,45);
 assert.equal(recommendation({...cfg,adaptive:false},runs([100,100,100])),null);
@@ -37,9 +37,10 @@ console.log('Pass: independent scores, swapped cards, missing cards, scoped retr
 
 assert.equal(columns(2),2);
 assert.equal(columns(4),4);
+assert.equal(columns(6),3);
 assert.equal(columns(8),4);
 assert.equal(columns(30),5);
-for (const [size,next] of [[2,4],[4,8],[8,10],[10,15],[15,20],[20,25],[25,30],[30,null]]) {
+for (const [size,next] of [[2,4],[4,6],[6,8],[8,10],[10,15],[15,20],[20,25],[25,30],[30,null]]) {
     const settings={...cfg,size};
     const result=recommendation(settings,[96,94,100].map(primary=>({...settings,primary})));
     assert.equal(result?.size??null,next);
@@ -47,4 +48,4 @@ for (const [size,next] of [[2,4],[4,8],[8,10],[10,15],[15,20],[20,25],[25,30],[3
     assert.equal(validSession({...sample,cfg:settings,cards:ids,order:ids,targets:ids,cursor:0,
         answers:ids.map(()=>null),phase:'observe',first:null,latest:null}),true);
 }
-console.log('Pass: all eight card counts, adaptive sequence, 8-card layout columns.');
+console.log('Pass: all nine card counts, adaptive sequence, and layout columns.');
