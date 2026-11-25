@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="물건 사진을 관찰하고 가린 뒤 무엇이 어디에 있었는지 떠올리는 사진 기억 훈련">
+  <title>사진 기억 훈련 | Jake의 기억력 훈련실</title>
+  <link rel="stylesheet" href="portal.css">
+  <link rel="stylesheet" href="photo-memory.css">
+  <link rel="preload" href="photo-objects.webp" as="image" type="image/webp">
+  <script src="photo-memory.js" defer></script>
+</head>
+<body>
+<main class="page-shell photo-lab">
+  <a class="back-link" href="memory.html">← 기억력 훈련실</a>
+  <header class="hero">
+    <span class="eyebrow">PHOTO MEMORY</span>
+    <h1>사진 기억 훈련</h1>
+    <p>사진을 가린 뒤, 어느 자리에 어떤 물건이 있었는지 떠올려 보세요.</p>
+  </header>
+  <noscript>훈련을 하려면 브라우저에서 자바스크립트를 켜 주세요.</noscript>
+  <section id="setup" class="photo-panel" aria-labelledby="setup-title">
+    <h2 id="setup-title" tabindex="-1">새 사진 연습</h2>
+    <div class="photo-settings">
+      <label>사진 배열 <select id="size">
+        <option value="4">2 × 2 · 4개</option>
+        <option value="9">3 × 3 · 9개</option>
+        <option value="12">3열 × 4행 · 12개</option>
+      </select></label>
+      <label>관찰 시간 <select id="seconds">
+        <option value="5">5초</option>
+        <option value="10" selected>10초</option>
+        <option value="20">20초</option>
+        <option value="30">30초</option>
+        <option value="0">제한 없음</option>
+      </select></label>
+    </div>
+    <button id="start" class="primary" type="button" disabled>새 사진 시작</button>
+    <p id="loading" role="status">물건 사진을 불러오는 중입니다.</p>
+    <p class="muted">처음에는 2 × 2에서 ‘왼쪽 위 사과’처럼 물건 하나와 자리를 묶어 보세요.</p>
+    <div id="saved" class="photo-saved" hidden>
+      <h3>지난 오답 사진</h3>
+      <p class="muted">사진을 다시 보기 전에 가린 상태로 먼저 떠올려 보세요.</p>
+      <div id="saved-list" class="photo-actions"></div>
+    </div>
+    <p id="best" class="muted" hidden></p>
+  </section>
+  <section id="play" class="photo-panel" aria-labelledby="phase" hidden>
+    <div class="photo-stage">
+      <h2 id="phase" tabindex="-1"></h2>
+      <span id="timer" hidden></span>
+    </div>
+    <p id="hint" class="muted"></p>
+    <div id="board" class="photo-board" aria-label="물건 사진 배치"></div>
+    <div id="picker" hidden>
+      <h3 id="target">물건 고르기</h3>
+      <p id="picker-feedback" role="status" class="sr-only"></p>
+      <div id="choices" class="photo-choices" aria-labelledby="target"></div>
+      <div class="photo-actions clear"><button id="clear" class="secondary" type="button">선택 지우기</button></div>
+    </div>
+    <div class="photo-actions">
+      <button id="hide" class="primary" type="button" hidden>사진 가리기</button>
+      <button id="grade" class="primary" type="button" hidden>채점하기</button>
+      <button id="exit" class="secondary" type="button">설정으로</button>
+    </div>
+  </section>
+  <section id="result" class="photo-panel" aria-labelledby="result-title" hidden>
+    <h2 id="result-title" tabindex="-1">훈련 결과</h2>
+    <div id="scores" class="photo-scores"></div>
+    <p id="result-note" class="muted"></p>
+    <div id="comparison" class="photo-comparison"></div>
+    <div class="photo-actions">
+      <button id="retry" class="primary" type="button" hidden>오답만 다시 관찰</button>
+      <button id="same" class="secondary" type="button">같은 사진 다시 관찰</button>
+      <button id="next" class="secondary" type="button">새 사진 시작</button>
+      <button id="home" class="secondary" type="button">설정으로</button>
+    </div>
+  </section>
+  <footer>새 사진의 첫 회상과 같은 사진의 복습 점수는 따로 보세요. 사물 사진은 훈련용으로 생성했으며, 기록은 이 브라우저에만 저장됩니다.</footer>
+</main>
+</body>
+</html>
