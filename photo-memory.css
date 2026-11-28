@@ -43,3 +43,15 @@
   .photo-lab .hero { margin-bottom: 15px; }
   .photo-lab:has(#play:not([hidden])) .hero { display: none; }
 }
+
+.photo-level { display:grid; gap:7px; padding:13px 15px; margin:0 0 13px; border:1px solid #bacfee; border-radius:14px; background:#f0f6ff; }
+.photo-level-head { display:flex; flex-wrap:wrap; justify-content:space-between; gap:3px 12px; align-items:baseline; }
+.photo-level-head strong { color:#164b9e; font-size:1.12rem; }
+.photo-level label { font-weight:700; font-size:.92rem; }
+.photo-level progress { width:100%; height:12px; accent-color:#1754bf; }
+.photo-level .muted { margin:3px 0; }
+.photo-level details { margin-top:3px; }
+.photo-level summary { cursor:pointer; color:#1e4f95; font-weight:700; }
+.photo-level-result { border-radius:12px; border:1px solid #bacfee; background:#f0f6ff; padding:10px 13px; line-height:1.55; }
+.photo-level-result.promoted { border-color:#a2ccb0; background:#ecf8ee; color:#155c36; font-weight:750; }
+.photo-board[data-count="12"] { width:min(100%,390px,42svh); }
