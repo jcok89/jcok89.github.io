@@ -6,9 +6,9 @@
   <meta name="description" content="물건 사진을 관찰하고 가린 뒤 무엇이 어디에 있었는지 떠올리는 사진 기억 훈련">
   <title>사진 기억 훈련 | Jake의 기억력 훈련실</title>
   <link rel="stylesheet" href="portal.css">
-  <link rel="stylesheet" href="photo-memory.css">
+  <link rel="stylesheet" href="photo-memory.css?v=2">
   <link rel="preload" href="photo-objects.webp" as="image" type="image/webp">
-  <script src="photo-memory.js" defer></script>
+  <script src="photo-memory.js?v=2" defer></script>
 </head>
 <body>
 <main class="page-shell photo-lab">
@@ -21,21 +21,42 @@
   <noscript>훈련을 하려면 브라우저에서 자바스크립트를 켜 주세요.</noscript>
   <section id="setup" class="photo-panel" aria-labelledby="setup-title">
     <h2 id="setup-title" tabindex="-1">새 사진 연습</h2>
-    <div class="photo-settings">
+    <div class="photo-settings photo-mode">
+      <label>훈련 방식 <select id="training-mode">
+        <option value="auto" selected>자동 레벨</option>
+        <option value="manual">자유 연습</option>
+      </select></label>
+    </div>
+    <div id="auto-panel" class="photo-level">
+      <div class="photo-level-head">
+        <strong id="level-title">Lv. 1 / 8</strong>
+        <span id="level-config">4장 · 10초</span>
+      </div>
+      <label id="level-progress-label" for="level-progress">현재 레벨 측정</label>
+      <progress id="level-progress" max="3" value="0" aria-describedby="level-detail"></progress>
+      <p id="level-detail" class="muted"></p>
+      <details>
+        <summary>레벨은 어떻게 올라가나요?</summary>
+        <p class="muted">자동 모드에서 새 사진을 처음 풀었을 때, 물건과 자리가 모두 맞은 비율로 측정해요. 현재 레벨의 최근 3회 평균이 90% 이상이고 매회 75% 이상이면 한 단계 올라가요. 같은 사진·오답 복습과 자유 연습은 반영하지 않아요.</p>
+      </details>
+    </div>
+    <div id="manual-settings" class="photo-settings" hidden>
       <label>사진 배열 <select id="size">
         <option value="4">2 × 2 · 4개</option>
+        <option value="6">3열 × 2행 · 6개</option>
         <option value="9">3 × 3 · 9개</option>
         <option value="12">3열 × 4행 · 12개</option>
       </select></label>
       <label>관찰 시간 <select id="seconds">
         <option value="5">5초</option>
         <option value="10" selected>10초</option>
+        <option value="15">15초</option>
         <option value="20">20초</option>
         <option value="30">30초</option>
         <option value="0">제한 없음</option>
       </select></label>
     </div>
-    <button id="start" class="primary" type="button" disabled>새 사진 시작</button>
+    <button id="start" class="primary" type="button" disabled>레벨 1 시작</button>
     <p id="loading" role="status">물건 사진을 불러오는 중입니다.</p>
     <p class="muted">처음에는 2 × 2에서 ‘왼쪽 위 사과’처럼 물건 하나와 자리를 묶어 보세요.</p>
     <div id="saved" class="photo-saved" hidden>
@@ -67,6 +88,7 @@
   <section id="result" class="photo-panel" aria-labelledby="result-title" hidden>
     <h2 id="result-title" tabindex="-1">훈련 결과</h2>
     <div id="scores" class="photo-scores"></div>
+    <p id="level-result" class="photo-level-result" role="status" hidden></p>
     <p id="result-note" class="muted"></p>
     <div id="comparison" class="photo-comparison"></div>
     <div class="photo-actions">
